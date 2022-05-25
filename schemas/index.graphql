@@ -1,0 +1,4 @@
+#import Query from 'Query.graphql'
+#import User from 'User.graphql'
+#import Friends from 'Friends.graphql'
+#import Community from 'Community.graphql'

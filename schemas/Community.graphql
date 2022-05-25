@@ -1,0 +1,4 @@
+type Community {
+    id: ID!
+    name: String!
+}
