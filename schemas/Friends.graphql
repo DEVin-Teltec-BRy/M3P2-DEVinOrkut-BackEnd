@@ -1,0 +1,4 @@
+type Friends {
+  id: ID!
+  name: String!
+}

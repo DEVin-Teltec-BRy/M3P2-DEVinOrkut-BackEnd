@@ -1,0 +1,36 @@
+{
+  "name": "m3p2-devinorkut-backend",
+  "version": "1.0.0",
+  "description": "Repositório back-end do projeto 2 do módulo 3.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon --ext js,graphql"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DEVin-Teltec-BRy/M3P2-DEVinOrkut-BackEnd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DEVin-Teltec-BRy/M3P2-DEVinOrkut-BackEnd/issues"
+  },
+  "homepage": "https://github.com/DEVin-Teltec-BRy/M3P2-DEVinOrkut-BackEnd#readme",
+  "dependencies": {
+    "apollo-datasource-mongodb": "^0.5.4",
+    "apollo-server": "^2.25.3",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "graphql": "^14.7.0",
+    "graphql-import": "^1.0.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.3.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  }
+}
