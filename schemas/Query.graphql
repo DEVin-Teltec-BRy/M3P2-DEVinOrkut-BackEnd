@@ -1,5 +1,5 @@
 # aqui serão declaradas todas as queries
 type Query {
-  user(id: ID!): User
-  users: [User]
+    user(id: ID!): User
+    users: [User]
 }
