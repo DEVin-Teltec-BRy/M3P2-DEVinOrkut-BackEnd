@@ -41,7 +41,7 @@ jobs:
           webhook_id: ${{ secrets.WEBHOOK_ID }}
           webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
           color: "#48f442"
-          username: "Mr. Robot"
+          username: "Mr.Robot"
           message: ${{ github.event_name }} ${{ github.ref_name }} by ${{ github.actor }}.
       - name: Slack notification
         env:
