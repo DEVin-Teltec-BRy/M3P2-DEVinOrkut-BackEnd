@@ -1,4 +1,5 @@
 # top-most EditorConfig file
+# aqui são as configurações para padronizar a formatação dos arquivos do projeto
 root = true
 
 [*]
