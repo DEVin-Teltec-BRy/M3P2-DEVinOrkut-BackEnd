@@ -11,3 +11,6 @@ Após clonar o projeto é preciso instalar as dependências
 ### `npm run dev`
 
 Para rodar o servidor em desenvolvimento deve ser executado npm run dev ou yarn dev
+
+
+

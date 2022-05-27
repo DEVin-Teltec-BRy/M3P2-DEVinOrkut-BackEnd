@@ -13,7 +13,14 @@ const email = new Email({
   },
   send: true,
   transport,
+  preview: {
+    open: {
+      app: 'firefox',
+      wait: false
+    }
+  }
 });
+
 /**
  * Função para enviar email
  * @param {Object} user É o usuario de destino do email dados minimos: email e nome.
