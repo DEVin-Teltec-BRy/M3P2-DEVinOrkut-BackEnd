@@ -15,33 +15,40 @@ const Communities = require('./Data-sources/Community');
 const { getUserId } = require('./Helpers/functions');
 
 const schemaPath = './schemas/index.graphql';
-const app = express();
-const server = new ApolloServer({
-    typeDefs: importSchema(schemaPath),
-    resolvers,
-    playground: true,
-    tracing: true,
-    context: ({ req }) => {
-        return {
-            db,
-            userId: req && req.headers.authorization ? getUserId(req) : null,
-        };
-    },
-    dataSources: () => ({
-        users: new Users(db.User),
-        communities: new Communities(db.Community),
-    }),
-});
-(async () => {
-    await server.start()
+
+(async function startApolloServer() {
+    const app = express();
+    const server = new ApolloServer({
+        typeDefs: importSchema(schemaPath),
+        resolvers,
+        playground: true,
+        tracing: true,
+        context: ({ req }) => {
+            return {
+                db,
+                userId:
+                    req && req.headers.authorization ? getUserId(req) : null,
+            };
+        },
+        dataSources: () => ({
+            users: new Users(db.User),
+            communities: new Communities(db.Community),
+        }),
+    });
+
+    await server.start();
+
     server.applyMiddleware({ app });
+
+    app.get('/', (req, res) => {
+        res.redirect('/graphql');
+    });
+
+    app.use(express.static(path.join(__dirname, 'public')));
+
+    await new Promise(resolve => app.listen({ port: port }, resolve));
+    console.log(
+        `🚀 Server ready at http://localhost:4000${server.graphqlPath}`,
+    );
+    return { server, app };
 })();
-app.get('/', (req, res) => {
-    res.redirect('/graphql');
-});
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.listen(port, () => {
-    console.log(`\u{1F680} Server running on ${port}`);
-});
