@@ -1,3 +1,5 @@
 # aqui serão declaradas as mutations
 type Mutation {
+    createCommunity(input: CommunityInput): Community
+
 }

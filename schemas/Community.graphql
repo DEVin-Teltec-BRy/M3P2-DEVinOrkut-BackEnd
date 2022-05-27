@@ -1,4 +1,16 @@
 type Community {
     id: ID!
-    name: String!
+    name: String
+    description: String
+    category: String
+    creation_date: Date
+    members: [User!]!
 }
+
+input CommunityInput {
+  name: String
+  description: String
+  category: String
+}
+
+scalar Date
