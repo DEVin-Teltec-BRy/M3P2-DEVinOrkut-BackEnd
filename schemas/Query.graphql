@@ -1,6 +1,7 @@
 # aqui serão declaradas todas as queries
 type Query {
-    user(id: ID!): User
-    users: [User]
-    communities: [Community]
+  user(id: ID!): User
+  users: [User]
+  communities: [Community]
+  community(id: ID!): Community
 }
