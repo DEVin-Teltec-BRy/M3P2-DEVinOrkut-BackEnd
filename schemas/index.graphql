@@ -2,3 +2,4 @@
 #import User from 'User.graphql'
 #import Friends from 'Friends.graphql'
 #import Community from 'Community.graphql'
+#import Mutation from 'Mutation.graphql'

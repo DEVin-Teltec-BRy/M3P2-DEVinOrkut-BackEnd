@@ -1,7 +1,9 @@
-scalar Date
+# aqui serão declaradas as mutations
+type Mutation {
+    createUser(user: UserInput!): AuthPayload!
+}
 
-type User {
-    id: ID!
+input UserInput {
     fullName: String!
     email: String!
     cpf: String!
@@ -20,19 +22,9 @@ type User {
     interests: [String!]
     aboutMe: String!
     password: String!
-    scraps: [ID!]
-    testimonial: [ID!]
-    trusty: [String]
-    cool: [String]
-    sexy: [String]
-    fans: [ID!]
-    profilePicture: [String]
-    album: [ID]
-    friends: [ID]
-    friendRequest: [ID]
-    communities: [ID]
-    createAt: Date
-    updated: Date
-
 }
 
+type AuthPayload {
+    token: String
+    user: User
+}

@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
     fullName: String,
-    cpf: Number,
+    cpf: String,
     email: String,
     birthDate: String,
     gender: String,
-    postal: Number,
+    postal: String,
     city: String,
     state: String,
     address: String,
@@ -23,7 +23,7 @@ const UserSchema = new Schema({
     scraps: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'scrap',
+            ref: 'Scrap',
         },
     ],
     testimonial: [
