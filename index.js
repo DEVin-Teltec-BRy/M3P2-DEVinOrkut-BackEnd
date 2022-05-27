@@ -15,7 +15,6 @@ const Communities = require('./Data-sources/Community');
 const { getUserId } = require('./Helpers/functions');
 
 const schemaPath = './schemas/index.graphql';
-
 const app = express();
 const server = new ApolloServer({
     typeDefs: importSchema(schemaPath),
@@ -37,6 +36,9 @@ const server = new ApolloServer({
     await server.start()
     server.applyMiddleware({ app });
 })();
+app.get('/', (req, res) => {
+    res.redirect('/graphql');
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
