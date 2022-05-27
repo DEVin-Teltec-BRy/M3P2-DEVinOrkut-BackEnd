@@ -1,6 +1,9 @@
+#import Query from 'Query.graphql'
+#import Mutation from 'Mutation.graphql'
 #import Community from 'Community.graphql'
 #import CommunityInput from 'Community.graphql'
 #import Friends from 'Friends.graphql'
-#import Mutation from 'Mutation.graphql'
-#import Query from 'Query.graphql'
 #import User from 'User.graphql'
+#import UserInput from 'User.graphql'
+#import AuthInput from 'User.graphql'
+
