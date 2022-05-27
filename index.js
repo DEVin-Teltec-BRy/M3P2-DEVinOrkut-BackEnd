@@ -3,14 +3,16 @@ const express = require('express');
 const path = require('path');
 
 const { importSchema } = require('graphql-import');
-const { port } = require('./config/environment');
-const resolvers = require('./resolvers');
+const { port } = require('./Config/Environment');
+const resolvers = require('./Resolvers');
 
-const db = require('./db');
-require('./db/start');
+const db = require('./Db');
+require('./Db/start');
 
-const Users = require('./data-sources/user');
-const { getUserId } = require('./helpers/functions');
+const Users = require('./Data-sources/User');
+const Communities = require('./Data-sources/Community');
+
+const { getUserId } = require('./Helpers/functions');
 
 const schemaPath = './schemas/index.graphql';
 

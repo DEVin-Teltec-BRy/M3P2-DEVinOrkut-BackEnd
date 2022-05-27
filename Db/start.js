@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { dbURL } = require('../config/environment');
+const { dbURL } = require('../Config/Environment');
 
 const dbUri = dbURL;
 const dbOptions = {
