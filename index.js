@@ -16,33 +16,30 @@ const { getUserId } = require('./Helpers/functions');
 
 const schemaPath = './schemas/index.graphql';
 
-const startApolloServer = async () => {
-    const app = express();
-    const server = new ApolloServer({
-        typeDefs: importSchema(schemaPath),
-        resolvers,
-        playground: true,
-        tracing: true,
-        context: ({ req }) => {
-            return {
-                db,
-                userId: req && req.headers.authorization ? getUserId(req) : null,
-            };
-        },
-        dataSources: () => ({
-            users: new Users(db.User),
-        })
-    });
-    await server.start();
-    
+const app = express();
+const server = new ApolloServer({
+    typeDefs: importSchema(schemaPath),
+    resolvers,
+    playground: true,
+    tracing: true,
+    context: ({ req }) => {
+        return {
+            db,
+            userId: req && req.headers.authorization ? getUserId(req) : null,
+        };
+    },
+    dataSources: () => ({
+        users: new Users(db.User),
+        communities: new Communities(db.Community),
+    }),
+});
+(async () => {
+    await server.start()
     server.applyMiddleware({ app });
-    
-    app.use(express.static(path.join(__dirname, 'public')));
+})();
 
-    await new Promise(resolve => app.listen({ port }, resolve));
+app.use(express.static(path.join(__dirname, 'public')));
 
-    console.log(`\u{1F680} Server ready at http://localhost:${port}${server.graphqlPath}`);
-    return { server, app };
-};
-
-startApolloServer();
+app.listen(port, () => {
+    console.log(`\u{1F680} Server running on ${port}`);
+});
