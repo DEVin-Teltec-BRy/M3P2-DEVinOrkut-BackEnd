@@ -1,5 +1,6 @@
 const { Community } = require('../Db');
 const { DateScalar } = require('./Scalar');
+var validator = require('validator');
 
 const communityResolvers = {
     Date: DateScalar,
@@ -13,18 +14,32 @@ const communityResolvers = {
         createCommunity: async (
             _,
             { input },
-            { dataSources: { communities } },
+            { dataSources: { communities, userId } },
         ) => {
             try {
+                // if (!userId) {
+                //     throw new Error(
+                //         'Você precisa estar logado para criar uma comunidade.',
+                //     );
+                // }
+
+                const isEmptyString = await validator.isEmpty(input.name, {
+                    ignore_whitespace: false,
+                });
+
+                if (isEmptyString) {
+                    throw new Error('Nome não pode ser vazio.');
+                }
+
                 const newCommunity = await communities.create({
-                    name: input.name,
+                    name: input.name.trim(),
+                    logo: input.logo,
                     description: input.description,
                     category: input.category,
                 });
                 return newCommunity;
-            } catch (error) {
-                console.log({ error });
-                throw new Error('Erro ao criar comunidade.');
+            } catch (err) {
+                throw new Error(`Algo deu errado: ${err.message}`);
             }
         },
     },
