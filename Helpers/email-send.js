@@ -1,6 +1,6 @@
 const path = require('path')
 
-const { configEmail } = require('../config/environment');
+const { configEmail } = require('../Config/Environment');
 
 const nodemailer = require('nodemailer')
 const Email = require('email-templates');

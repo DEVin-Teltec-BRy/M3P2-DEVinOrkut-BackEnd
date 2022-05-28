@@ -29,7 +29,16 @@ function passwordValidator(password) {
     );
 }
 
+const ifFriendOrRequestThrowErro = (arrObjIds, userId) => {
+    const hasResult = arrObjIds.find(objectId => objectId.toString() === userId);
+    if(hasResult) {
+      throw new UserInputError('Usuário ja é seu amigo ou ja existe uma solicitação.', {
+        argumentName: 'requestedId',
+      });
+    }
+  }
 module.exports = {
     getUserId,
     passwordValidator,
+    ifFriendOrRequestThrowErro,
 };

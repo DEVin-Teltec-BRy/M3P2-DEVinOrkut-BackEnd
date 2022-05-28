@@ -5,6 +5,7 @@ const validator = require('validator');
 const { UserInputError } = require('apollo-server');
 const { passwordValidator } = require('../helpers/functions');
 const cpfValidator = require('../helpers/validatorCpf');
+const { friendRequest } = require('./friendshipResolvers');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -56,6 +57,7 @@ const userResolvers = {
                 console.log(error);
             }
         },
+        requestFriendship: friendRequest
     },
 };
 
