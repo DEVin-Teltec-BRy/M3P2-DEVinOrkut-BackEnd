@@ -7,6 +7,9 @@ class Community extends MongoDataSource {
     getAll() {
         return this.model.find();
     }
+    joinCommunity(community) {
+        return this.model.findByIdAndUpdate(community);
+    }
 }
 
 module.exports = Community;
