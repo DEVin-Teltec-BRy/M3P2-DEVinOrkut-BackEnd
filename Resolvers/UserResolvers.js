@@ -55,7 +55,6 @@ const userResolvers = {
 
                 return {
                     token,
-                    user: userCreated,
                 };
             } catch (error) {
                 console.log(error);
