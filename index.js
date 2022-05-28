@@ -1,4 +1,7 @@
-const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServer } = require('apollo-server-express');
+const express = require('express');
+const path = require('path');
+
 const { importSchema } = require('graphql-import');
 const { port } = require('./Config/Environment');
 const resolvers = require('./Resolvers');
@@ -13,23 +16,39 @@ const { getUserId } = require('./Helpers/functions');
 
 const schemaPath = './schemas/index.graphql';
 
-const server = new ApolloServer({
-    typeDefs: importSchema(schemaPath),
-    resolvers,
-    playground: true,
-    tracing: true,
-    context: ({ req }) => {
-        return {
-            db,
-            userId: req && req.headers.authorization ? getUserId(req) : null,
-        };
-    },
-    dataSources: () => ({
-        users: new Users(db.User),
-        communities: new Communities(db.Community),
-    }),
-});
+(async function startApolloServer() {
+    const app = express();
+    const server = new ApolloServer({
+        typeDefs: importSchema(schemaPath),
+        resolvers,
+        playground: true,
+        tracing: true,
+        context: ({ req }) => {
+            return {
+                db,
+                userId:
+                    req && req.headers.authorization ? getUserId(req) : null,
+            };
+        },
+        dataSources: () => ({
+            users: new Users(db.User),
+            communities: new Communities(db.Community),
+        }),
+    });
 
-server.listen({ port }).then(({ url }) => {
-    console.log(`\u{1F680} Server running on ${url}`);
-});
+    await server.start();
+
+    server.applyMiddleware({ app });
+
+    app.get('/', (req, res) => {
+        res.redirect('/graphql');
+    });
+
+    app.use(express.static(path.join(__dirname, 'public')));
+
+    await new Promise(resolve => app.listen({ port: port }, resolve));
+    console.log(
+        `🚀 Server ready at http://localhost:4000${server.graphqlPath}`,
+    );
+    return { server, app };
+})();
