@@ -35,6 +35,15 @@ type User {
     updated: Date
 
 }
+input UserPassword {
+    fullName:String!
+    email:String!
+}
+
+input NewPassword {
+    newPassword:String!
+    onfirmPassword:String!
+}
 
 input UserInput {
     fullName: String!

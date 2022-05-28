@@ -5,6 +5,7 @@ const validator = require('validator');
 const { UserInputError } = require('apollo-server');
 const { passwordValidator } = require('../helpers/functions');
 const cpfValidator = require('../helpers/validatorCpf');
+const sendEmail = require('../Helpers/email-send');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -56,6 +57,38 @@ const userResolvers = {
                 console.log(error);
             }
         },
+        sendEmailresetPassword: async (
+            _,
+            { user },
+            { dataSources: { users } },
+        ) => {
+            try {
+                const isEmailValid = await validator.isEmail(user.email);
+                if (!isEmailValid) {
+                    throw new UserInputError('Invalid argument value', {
+                        argumentName: 'email',
+                    });
+                }
+                const gmail = user.email
+                const existingUser = await users.findByEmail(gmail);
+                console.log(existingUser);
+                if(existingUser.length ===0) return `Email enviado para ${user.email}`;
+                const userObject = {
+                    name: user.fullName,
+                    email: user.email,
+                };
+                //enviar token no link
+                const variables = {
+                    link: `localhost:3000/resetpassword/${user.email}`,
+                };
+                sendEmail(userObject, variables, '../emails/reset-password');
+
+                return `Email enviado para ${user.email}`;
+            } catch (error) {
+                return 'deu ruim';
+            }
+        },
+        changePassword: async () => {},
     },
 };
 
