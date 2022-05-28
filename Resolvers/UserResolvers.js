@@ -12,13 +12,23 @@ const cpf = new cpfValidator();
 // resolvers
 const userResolvers = {
     Query: {
-        users: async (_, { id }, { dataSources: { users }, userId }) => {
-            if (!userId) throw new AuthenticationError('you must be logged in');
-            return users.getUser(id);
+        user: async (_, { id }, { dataSources: { users }, userId }) => {
+            try {
+                if (!userId)
+                    throw new AuthenticationError('you must be logged in');
+                return users.getUser(id);
+            } catch (error) {
+                console.log(error);
+            }
         },
         users: async (_, __, { dataSources: { users }, userId }) => {
-            if (!userId) throw new AuthenticationError('you must be logged in');
-            return users.getAll();
+            try {
+                if (!userId)
+                    throw new AuthenticationError('you must be logged in');
+                return users.getAll();
+            } catch (error) {
+                console.log(error);
+            }
         },
     },
     Mutation: {
@@ -51,7 +61,7 @@ const userResolvers = {
                 const password = await brcypt.hash(user.password, 10);
                 const userCreated = await users.create({ ...user, password });
                 //adicionar expires.
-                const token = jwt.sign({ userId: userCreated.id }, secretKey);
+                const token = jwt.sign({ userId: userCreated._id }, secretKey);
 
                 return {
                     token,
