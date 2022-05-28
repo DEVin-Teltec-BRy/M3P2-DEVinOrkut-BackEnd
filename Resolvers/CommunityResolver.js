@@ -38,7 +38,7 @@ const communityResolvers = {
                 // A modificação da variavel userId(inserindo ID de algum membro da comunidade) 
                 // deve ser feita para efeito de testes, pois a feature de login
                 // não foi implementada no projeto. Excluir esse comentário e alteração quando a feature de login for implementada. 
-                userId = '628feb45cad8e4e007601c6x';
+                // userId = '628feb45cad8e4e007601c6x';
                 if (!userId) {
                     return [];
                 }
