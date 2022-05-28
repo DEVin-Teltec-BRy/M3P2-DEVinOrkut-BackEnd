@@ -37,16 +37,15 @@ const communityResolvers = {
 
                 // A modificação da variavel userId(inserindo ID de algum membro da comunidade) 
                 // deve ser feita para efeito de testes, pois a feature de login
-                // não foi implementada no projeto. Excluir esse comentário quando a feature de login for implementada. 
-                userId = '62915a0f5e0e3f1b54c8cd02';
+                // não foi implementada no projeto. Excluir esse comentário e alteração quando a feature de login for implementada. 
+                userId = '628feb45cad8e4e007601c6x';
                 if (!userId) {
                     return [];
                 }
                 const memberOrNot = await communityArg.members.find(member => member.toString() === userId.toString());
                 if (memberOrNot) {
-                    const data = await users.findManyByIds(communityArg.members)
-                    const response = await data.slice(newOffset, newOffset + newLimit).reverse();
-                    return response;
+                    const data = await users.findManyByIds(communityArg.members);
+                    return await data.slice(newOffset, newOffset + newLimit).reverse();
                 } else {
                     return [];
                 }
