@@ -2,7 +2,7 @@ name: Notification Pull Request Open
 
 on:
   pull_request:
-    branches: master
+    branches: development
 
 jobs:
   build:
