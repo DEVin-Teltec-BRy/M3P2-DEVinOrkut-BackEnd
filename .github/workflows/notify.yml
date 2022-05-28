@@ -11,20 +11,20 @@ jobs:
     steps:
     - name: Open Pull Request Notify
 
-       uses: appleboy/discord-action@0.0.3
-        with:
+      uses: appleboy/discord-action@0.0.3
+      with:
           webhook_id: ${{ secrets.WEBHOOK_ID }}
           webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
           color: "#48f442"
           username: "Mr.Robot"
-          message: ${{ github.event_name }} ${{ github.ref_name }} by ${{ github.actor }}.
+          message: Pull Request aberta por ${{ github.actor }}.
     - name: Slack notification
-       env:
+      env:
             SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
             SLACK_USERNAME: ThisIsMyUsername # Optional. (defaults to webhook app)
             SLACK_CHANNEL: general # Optional. (defaults to webhook)
             SLACK_AVATAR: repository # Optional. can be (repository, sender, an URL) (defaults to webhook app avatar)
             SLACK_CUSTOM_PAYLOAD: '{"text":"Pull Request aberta por {{ GITHUB_ACTOR }}"}'
-        uses: Ilshidur/action-slack@2.0.2
-        with:
+      uses: Ilshidur/action-slack@2.0.2
+      with:
             args: 'A new commit has been pushed.' # Optional
