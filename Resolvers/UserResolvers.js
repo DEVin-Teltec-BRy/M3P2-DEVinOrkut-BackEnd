@@ -1,10 +1,10 @@
 const brcypt = require('bcryptjs/dist/bcrypt');
 const jwt = require('jsonwebtoken');
-const environment = require('../config/environment');
+const environment = require('../Config/environment');
 const validator = require('validator');
-const { UserInputError } = require('apollo-server');
-const { passwordValidator } = require('../helpers/functions');
-const cpfValidator = require('../helpers/validatorCpf');
+const { UserInputError, AuthenticationError } = require('apollo-server');
+const { passwordValidator } = require('../Helpers/functions');
+const cpfValidator = require('../Helpers/validatorCpf');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -12,9 +12,14 @@ const cpf = new cpfValidator();
 // resolvers
 const userResolvers = {
     Query: {
-        users: async (_, { id }, { dataSources: { users } }) =>
-            users.getUser(id),
-        users: async (_, __, { dataSources: { users } }) => users.getAll(),
+        users: async (_, { id }, { dataSources: { users }, userId }) => {
+            if (!userId) throw new AuthenticationError('you must be logged in');
+            return users.getUser(id);
+        },
+        users: async (_, __, { dataSources: { users }, userId }) => {
+            if (!userId) throw new AuthenticationError('you must be logged in');
+            return users.getAll();
+        },
     },
     Mutation: {
         createUser: async (_, { user }, { dataSources: { users } }) => {
