@@ -12,12 +12,12 @@ const cpf = new cpfValidator();
 // resolvers
 const userResolvers = {
     Query: {
-        users: async (_, { id }, { dataSources: { users }, user }) => {
-            if (!user) throw new AuthenticationError('you must be logged in');
+        users: async (_, { id }, { dataSources: { users }, userId }) => {
+            if (!userId) throw new AuthenticationError('you must be logged in');
             return users.getUser(id);
         },
-        users: async (_, __, { dataSources: { users }, user }) => {
-            if (!user) throw new AuthenticationError('you must be logged in');
+        users: async (_, __, { dataSources: { users }, userId }) => {
+            if (!userId) throw new AuthenticationError('you must be logged in');
             return users.getAll();
         },
     },
