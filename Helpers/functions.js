@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
+const environment = require('../Config/Environment');
+
+const secretKey = environment.jwtAccessTokenSecret;
 
 function getTokenPayload(token) {
-    return jwt.verify(token, process.env.APP_SECRET);
+    return jwt.verify(token, secretKey);
 }
 
 function getUserId(req, authToken) {

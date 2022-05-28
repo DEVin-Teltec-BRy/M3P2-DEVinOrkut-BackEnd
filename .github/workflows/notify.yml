@@ -1,0 +1,31 @@
+name: Notification Pull Request Open
+
+on:
+  pull_request:
+    branches: development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+    - name: Open Pull Request Notify
+
+      uses: appleboy/discord-action@0.0.3
+      with:
+          webhook_id: ${{ secrets.WEBHOOK_ID }}
+          webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
+          color: "#48f442"
+          username: "Mr.Robot"
+          message: ${{ github.repository }} -> ${{ github.workflow }} on ${{ github.base_ref }}  by ${{ github.actor }}.
+    - name: Slack notification
+      env:
+            SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+            SLACK_USERNAME: ThisIsMyUsername # Optional. (defaults to webhook app)
+            SLACK_CHANNEL: general # Optional. (defaults to webhook)
+            SLACK_AVATAR: repository # Optional. can be (repository, sender, an URL) (defaults to webhook app avatar)
+            SLACK_CUSTOM_PAYLOAD: '{"text":"{{ GITHUB_REPOSITORY }} -> {{ GITHUB_WORKFLOW }} on {{ GITHUB_BASE_REF }} by {{ GITHUB_ACTOR }}"}'
+      uses: Ilshidur/action-slack@2.0.2
+      with:
+            args: 'A new commit has been pushed.' # Optional
