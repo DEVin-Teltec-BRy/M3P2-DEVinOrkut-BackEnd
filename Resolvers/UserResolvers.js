@@ -1,6 +1,6 @@
 const brcypt = require('bcryptjs/dist/bcrypt');
 const jwt = require('jsonwebtoken');
-const environment = require('../Config/environment');
+const environment = require('../Config/Environment');
 const validator = require('validator');
 const { UserInputError, AuthenticationError } = require('apollo-server');
 const { passwordValidator } = require('../Helpers/functions');
