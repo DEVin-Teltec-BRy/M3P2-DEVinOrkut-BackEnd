@@ -1,5 +1,63 @@
+scalar Date
+
 type User {
     id: ID!
-    name: String!
+    fullName: String!
     email: String!
+    cpf: String!
+    birthDate: String!
+    gender: String
+    postal: String!
+    city: String!
+    state: String!
+    address: String!
+    number: String!
+    complement: String!
+    district: String!
+    reference: String!
+    relationship: String!
+    humor:[String!]
+    interests: [String!]
+    aboutMe: String!
+    password: String!
+    scraps: [ID!]
+    testimonial: [ID!]
+    trusty: [String]
+    cool: [String]
+    sexy: [String]
+    fans: [ID!]
+    profilePicture: [String]
+    album: [ID]
+    friends: [ID]
+    friendRequest: [ID]
+    communities: [ID]
+    createAt: Date
+    updated: Date
+
+}
+
+input UserInput {
+    fullName: String!
+    email: String!
+    cpf: String!
+    birthDate: String!
+    gender: String
+    postal: String!
+    city: String!
+    state: String!
+    address: String!
+    number: String!
+    complement: String!
+    district: String!
+    reference: String!
+    relationship: String!
+    humor:[String!]
+    interests: [String!]
+    aboutMe: String!
+    password: String!
+}
+
+type AuthPayload {
+    token: String
+    user: User
 }
