@@ -2,9 +2,36 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const CommunitySchema = mongoose.Schema({
-    name: String,
-    description: String,
-    category: String,
+    logo: {
+        type: String,
+        required: true,
+    },
+    name: {
+        type: String,
+        unique: true,
+        required: true,
+    },
+    description: {
+        type: String,
+        unique: true,
+        required: true,
+    },
+    category: {
+        type: String,
+        enum: [
+            'BEM_ESTAR',
+            'DIVERSOS',
+            'ESPORTES',
+            'FAMOSOS',
+            'FILMES',
+            'GASTRONOMIA',
+            'JOGOS',
+            'MUSICA',
+            'NATUREZA',
+            'TECNOLOGIA',
+        ],
+        default: 'DIVERSOS',
+    },
     creation_date: {
         type: Date,
         default: Date.now(),

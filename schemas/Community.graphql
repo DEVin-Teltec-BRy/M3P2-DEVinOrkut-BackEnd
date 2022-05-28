@@ -1,16 +1,31 @@
 type Community {
     id: ID!
-    name: String
-    description: String
-    category: String
+    logo: String!
+    name: String!
+    description: String!
+    category: Category!
     creation_date: Date
     members: [User!]!
 }
 
 input CommunityInput {
+  logo: String
   name: String
   description: String
   category: String
+}
+
+enum Category {
+  BEM_ESTAR
+  DIVERSOS
+  ESPORTES
+  FAMOSOS
+  FILMES
+  GASTRONOMIA
+  JOGOS
+  MUSICA
+  NATUREZA
+  TECNOLOGIA
 }
 
 scalar Date
