@@ -23,6 +23,13 @@ function getUserId(req, authToken) {
     throw new Error('Not authenticated');
 }
 
+function passwordValidator(password) {
+    return password.match(
+        /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+    );
+}
+
 module.exports = {
     getUserId,
+    passwordValidator,
 };
