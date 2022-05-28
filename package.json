@@ -30,7 +30,8 @@
         "graphql": "^15.8.0",
         "graphql-import": "^1.0.2",
         "jsonwebtoken": "^8.5.1",
-        "mongoose": "^6.3.3"
+        "mongoose": "^6.3.3",
+        "validator": "^13.7.0"
     },
     "devDependencies": {
         "nodemon": "^2.0.16",
