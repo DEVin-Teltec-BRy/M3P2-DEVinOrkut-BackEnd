@@ -51,7 +51,7 @@ const userResolvers = {
                 const password = await brcypt.hash(user.password, 10);
                 const userCreated = await users.create({ ...user, password });
                 //adicionar expires.
-                const token = jwt.sign({ userId: userCreated }, secretKey);
+                const token = jwt.sign({ userId: userCreated.id }, secretKey);
 
                 return {
                     token,
