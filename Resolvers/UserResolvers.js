@@ -92,7 +92,7 @@ const userResolvers = {
                 };
                 sendEmail(userObject, variables, '../emails/reset-password');
 
-                return `Email enviado para ${Token}`;
+                return `Email enviado para ${user.email}`;
             } catch (error) {
                 return 'Email enviado';
             }
