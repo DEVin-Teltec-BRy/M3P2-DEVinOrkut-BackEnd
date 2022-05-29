@@ -13,6 +13,7 @@ class Users extends MongoDataSource {
     findByEmail(email) {
         return this.findByFields({ email });
     }
+    
 }
 
 module.exports = Users;

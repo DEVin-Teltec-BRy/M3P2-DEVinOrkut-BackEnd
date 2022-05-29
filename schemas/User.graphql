@@ -36,13 +36,13 @@ type User {
 
 }
 input UserPassword {
-    fullName:String!
     email:String!
 }
 
 input NewPassword {
+    token:String!
     newPassword:String!
-    onfirmPassword:String!
+    confirmPassword:String!
 }
 
 input UserInput {
