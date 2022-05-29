@@ -56,6 +56,35 @@ const userResolvers = {
                 console.log(error);
             }
         },
+
+        login: async(_, { email, password}, { dataSources: { users } } , info ) => {
+          try {
+              const [user] = await users.findByEmail(email) 
+              if (!user) {
+                throw new UserInputError('Usuario não encontrado', {
+                    argumentName: 'email',
+                });  
+              }
+              const isValid = await brcypt.compare(password, user.password)
+              if (!isValid) {
+                throw new UserInputError('Email ou senha invalido, tente novamente', {
+                    argumentName: 'login',
+                });
+              }
+
+              const token = jwt.sign({ _id: user._id }, secretKey) 
+         
+              return {
+                  token,
+                  user
+              }
+
+
+          } catch (error) {
+              console.log(error)
+          }
+        }
+
     },
 };
 
