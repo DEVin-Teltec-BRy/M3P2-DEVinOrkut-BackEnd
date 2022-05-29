@@ -9,7 +9,7 @@ const { typesOfUser } = require('./typesUser')
 const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
 const bcrypt = require('bcryptjs/dist/bcrypt');
-const { declineFriendship, friendRequest,acceptRequest } = require('./friendshipResolvers');
+const friendshipResolvers = require('./friendshipResolvers');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -130,9 +130,10 @@ const userResolvers = {
               console.log(error)
           }
         },
-        refuseFriendship: declineFriendship,
-        requestFriendship: friendRequest,
-        acceptRequest,
+        refuseFriendship: friendshipResolvers.declineFriendship,
+        requestFriendship: friendshipResolvers.friendRequest,
+        removeFriendship: friendshipResolvers.removeFriendship,
+        acceptRequest: friendshipResolvers.acceptRequest,
     },
         sendEmailresetPassword: async (
             _,

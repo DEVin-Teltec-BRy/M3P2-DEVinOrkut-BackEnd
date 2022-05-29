@@ -6,7 +6,8 @@ type Mutation {
     requestFriendship(senderId: ID!, requestedId: ID!): User!
     sendEmailresetPassword(user:UserPassword):String
     changePassword(user:NewPassword):String
-    refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User!
+    refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User
+    removeFriendship(loggedUserId: ID!, removeFriendshipId: ID!): [User]
     acceptRequest(loggedUserId: ID!, acceptFriendshipId: ID!): [User]!
 
 }
