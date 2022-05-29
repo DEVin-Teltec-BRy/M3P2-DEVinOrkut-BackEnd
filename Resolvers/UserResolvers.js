@@ -6,7 +6,7 @@ const { UserInputError, AuthenticationError } = require('apollo-server');
 const { passwordValidator } = require('../Helpers/functions');
 const cpfValidator = require('../Helpers/validatorCpf');
 const { typesOfUser } = require('./typesUser')
-const { declineFriendship, friendRequest,acceptRequest } = require('./friendshipResolvers');
+const friendshipResolvers = require('./friendshipResolvers');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -127,9 +127,10 @@ const userResolvers = {
               console.log(error)
           }
         },
-        refuseFriendship: declineFriendship,
-        requestFriendship: friendRequest,
-        acceptRequest,
+        refuseFriendship: friendshipResolvers.declineFriendship,
+        requestFriendship: friendshipResolvers.friendRequest,
+        removeFriendship: friendshipResolvers.removeFriendship,
+        acceptRequest: friendshipResolvers.acceptRequest,
     },
     User: typesOfUser,
 };
