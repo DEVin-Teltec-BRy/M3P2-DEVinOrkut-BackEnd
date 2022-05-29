@@ -28,8 +28,8 @@ type User {
     fans: [ID!]
     profilePicture: [String]
     album: [ID]
-    friends: [ID]
-    friendRequest: [ID]
+    friends: [User]!
+    friendRequest: [User]!
     communities: [ID]
     createAt: Date
     updated: Date

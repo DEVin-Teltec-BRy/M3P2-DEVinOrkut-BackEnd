@@ -5,6 +5,7 @@ const validator = require('validator');
 const { UserInputError, AuthenticationError } = require('apollo-server');
 const { passwordValidator } = require('../Helpers/functions');
 const cpfValidator = require('../Helpers/validatorCpf');
+const { typesOfUser } = require('./typesUser')
 const { declineFriendship, friendRequest } = require('./friendshipResolvers');
 
 const secretKey = environment.jwtAccessTokenSecret;
@@ -102,6 +103,7 @@ const userResolvers = {
         refuseFriendship: declineFriendship,
         requestFriendship: friendRequest
     },
+    User: typesOfUser,
 };
 
 module.exports = userResolvers;
