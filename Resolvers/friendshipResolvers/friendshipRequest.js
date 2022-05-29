@@ -2,7 +2,7 @@ const { UserInputError } = require("apollo-server");
 const sendEmail = require("../../Helpers/email-send");
 const { ifFriendOrRequestThrowErro } = require("../../Helpers/functions");
 
-const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { users }, userId, hostname }) => { 
+const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { users }, userId }) => { 
   const loggedUser = await users.getUser(userId)
   if (!loggedUser ) {
     throw new UserInputError('Você precisa estar logado para fazer isso');
@@ -22,15 +22,14 @@ const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { us
   ifFriendOrRequestThrowErro(userRequested.friends, senderId);  
   userRequested.friendRequest.push(loggedUser);
   const sendEmailTo = {
-    name: userRequested.name,
+    name: userRequested.fullName,
     email: userRequested.email,
   }
 
   const variables = {
-    senderName: loggedUser.name,
-    link: "link para direcionar a tela de solicitações.",
-    host: hostname,
-    user: sendEmailTo,
+    senderName: loggedUser.fullName,
+    redirectLink: "http://localhost:3000/assets/imgs/logo.png",
+    linkLogo: "http://localhost:3000/assets/imgs/logo.png",
   }
   sendEmail(sendEmailTo, variables, 'invite-friend');
   return userRequested.save();

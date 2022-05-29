@@ -29,7 +29,6 @@ const schemaPath = './schemas/index.graphql';
         tracing: true,
         context: ({ req }) => {
             return {
-                hostname: req.hostname,
                 userId:
                     req && req.headers.authorization ? getUserId(req) : null,
             };

@@ -1,3 +1,4 @@
+const { UserInputError } = require('apollo-server');
 const jwt = require('jsonwebtoken');
 const environment = require('../Config/Environment');
 
