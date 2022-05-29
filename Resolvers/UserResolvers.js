@@ -104,8 +104,8 @@ const userResolvers = {
             }
         },
         refuseFriendship: declineFriendship,
-        requestFriendship: friendRequest
-    },
+        requestFriendship: friendRequest,
+    
         sendEmailresetPassword: async (
             _,
             { user },
@@ -164,6 +164,7 @@ const userResolvers = {
                 return error;
             }
         },
+    },
     
     User:typesOfUser
 };
