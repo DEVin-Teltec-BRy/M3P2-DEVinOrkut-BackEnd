@@ -4,4 +4,5 @@ type Mutation {
     createUser(user: UserInput!): AuthPayload!
     requestFriendship(senderId: ID!, requestedId: ID!): User!
     refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User
+    removeFriendship(loggedUserId: ID!, removeFriendshipId: ID!): [User]
 }
