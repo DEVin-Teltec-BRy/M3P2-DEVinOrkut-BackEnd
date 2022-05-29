@@ -7,7 +7,11 @@ const communityResolvers = {
 
     Query: {
         communities: async () => Community.find(),
-        community: async (_, { id }, { dataSources: { communities }, userId }) => communities.findOneById(id),
+        community: async (
+            _,
+            { id },
+            { dataSources: { communities }, userId },
+        ) => communities.findOneById(id),
     },
 
     Mutation: {
@@ -42,25 +46,65 @@ const communityResolvers = {
                 throw new Error(`Algo deu errado: ${err.message}`);
             }
         },
+        joinCommunity: async (
+            _,
+            { community_id },
+            { dataSources: { communities }, userId },
+        ) => {
+            try {
+                if (!userId) {
+                    throw new Error(
+                        'Você precisa estar logado para criar uma comunidade.',
+                    );
+                }
+
+                const community = await Community.findById(community_id);
+                const hasMember = community.members.includes(userId);
+
+                if (hasMember) {
+                    throw new Error('Você já faz parte da comunidade.');
+                }
+
+                const newMember = await Community.findOneAndUpdate(
+                    { _id: community_id },
+                    { $push: { members: userId } },
+                );
+
+                return newMember;
+            } catch (error) {
+                throw new Error(`${error.message}`);
+            }
+        },
     },
     Community: {
-        members: async (communityArg, { limit, offset }, { dataSources: { users }, userId }, info) => {
-            const newLimit = !Number(limit) || Number(limit) > 20 ? 20 : Number(limit);
+        members: async (
+            communityArg,
+            { limit, offset },
+            { dataSources: { users }, userId },
+            info,
+        ) => {
+            const newLimit =
+                !Number(limit) || Number(limit) > 20 ? 20 : Number(limit);
             const newOffset = !Number(offset) ? 0 : Number(offset);
-            console.log(newOffset, newLimit)
+            console.log(newOffset, newLimit);
             try {
-
-                // A modificação da variavel userId(inserindo ID de algum membro da comunidade) 
+                // A modificação da variavel userId(inserindo ID de algum membro da comunidade)
                 // deve ser feita para efeito de testes, pois a feature de login
-                // não foi implementada no projeto. Excluir esse comentário e alteração quando a feature de login for implementada. 
+                // não foi implementada no projeto. Excluir esse comentário e alteração quando a feature de login for implementada.
                 // userId = '628feb45cad8e4e007601c6x';
                 if (!userId) {
                     return [];
                 }
-                const memberOrNot = await communityArg.members.find(member => member.toString() === userId.toString());
+                const memberOrNot = await communityArg.members.find(
+                    member => member.toString() === userId.toString(),
+                );
                 if (memberOrNot) {
-                    const data = await users.findManyByIds(communityArg.members);
-                    return await data.slice(newOffset, newOffset + newLimit).reverse();
+                    const data = await users.findManyByIds(
+                        communityArg.members,
+                    );
+                    return await data
+                        .slice(newOffset, newOffset + newLimit)
+                        .reverse();
                 } else {
                     return [];
                 }
@@ -68,7 +112,7 @@ const communityResolvers = {
                 return error.message;
             }
         },
-    }
+    },
 };
 
 module.exports = communityResolvers;

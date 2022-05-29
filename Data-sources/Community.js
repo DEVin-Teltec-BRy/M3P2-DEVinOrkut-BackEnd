@@ -7,8 +7,11 @@ class Community extends MongoDataSource {
     getAll() {
         return this.model.find();
     }
-    searchCommunityByName(name){
-        return this.model.find({name: {$regex:name, $options: "i"}});
+    joinCommunity(communityId) {
+        return this.model.findByIdAndUpdate(communityId);
+    }
+    searchCommunityByName(name) {
+        return this.model.find({ name: { $regex: name, $options: 'i' } });
     }
 }
 
