@@ -104,28 +104,27 @@ const userResolvers = {
             }
         },
         refuseFriendship: declineFriendship,
-        requestFriendship: friendRequest
-    },
+        requestFriendship: friendRequest,
         sendEmailresetPassword: async (
             _,
             { user },
             { dataSources: { users } },
-        ) => {
-            try {
-                const isEmailValid = await validator.isEmail(user.email);
-                if (!isEmailValid) {
-                    throw new UserInputError('Invalid argument value', {
-                        argumentName: 'email',
-                    });
-                }
-                const gmail = user.email;
-                const existingUser = await users.findByEmail(gmail);
-                console.log(existingUser);
-                if (existingUser.length === 0)
+            ) => {
+                try {
+                    const isEmailValid = await validator.isEmail(user.email);
+                    if (!isEmailValid) {
+                        throw new UserInputError('Invalid argument value', {
+                            argumentName: 'email',
+                        });
+                    }
+                    const gmail = user.email;
+                    const existingUser = await users.findByEmail(gmail);
+                    console.log(existingUser);
+                    if (existingUser.length === 0)
                     return `Email enviado para ${user.email}`;
-                const Token = jwt.sign(
-                    { email: gmail },
-                    process.env.JWT_ACCESS_TOKEN_SECRET,
+                    const Token = jwt.sign(
+                        { email: gmail },
+                        process.env.JWT_ACCESS_TOKEN_SECRET,
                     { expiresIn: '15m' },
                 );
                 const userObject = {
@@ -138,7 +137,7 @@ const userResolvers = {
                     link: `localhost:3000/resetpassword/${Token}`,
                 };
                 sendEmail(userObject, variables, '../emails/reset-password');
-
+                
                 return `Email enviado para ${user.email}`;
             } catch (error) {
                 return 'Email enviado';
@@ -147,25 +146,27 @@ const userResolvers = {
         changePassword: async (_, { user }, { dataSources: { users } }) => {
             try {
                 if (user.newPassword !== user.confirmPassword)
-                    return 'A confirmação de senha precisa ser igual a nova senha.';
+                return 'A confirmação de senha precisa ser igual a nova senha.';
                 const validatingToken = jwt.verify(
                     user.token,
                     process.env.JWT_ACCESS_TOKEN_SECRET,
-                );
-                console.log(validatingToken);
-                const email = validatingToken.email;
-                const hashedPass = await bcrypt.hash(user.newPassword, 10);
-                const updatePassword = await Users.updateOne(
-                    { email },
-                    { password: hashedPass },
-                );
-                return `Nova senha cadastrada com sucesso.`;
-            } catch (error) {
-                return error;
-            }
-        },
+                    );
+                    console.log(validatingToken);
+                    const email = validatingToken.email;
+                    const hashedPass = await bcrypt.hash(user.newPassword, 10);
+                    const updatePassword = await Users.updateOne(
+                        { email },
+                        { password: hashedPass },
+                        );
+                        return `Nova senha cadastrada com sucesso.`;
+                    } catch (error) {
+                        return error;
+                    }
+                },
     
-    User:typesOfUser
-};
-
-module.exports = userResolvers;
+            },
+                User:typesOfUser
+            };
+            
+            module.exports = userResolvers;
+            
