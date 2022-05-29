@@ -136,7 +136,7 @@ const userResolvers = {
         requestFriendship: friendshipResolvers.friendRequest,
         removeFriendship: friendshipResolvers.removeFriendship,
         acceptRequest: friendshipResolvers.acceptRequest,
-    },
+    
         sendEmailresetPassword: async (
             _,
             { user },
@@ -195,7 +195,7 @@ const userResolvers = {
                 return error;
             }
         },
-    
+    },
     User:typesOfUser
 };
 
