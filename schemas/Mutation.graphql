@@ -7,4 +7,5 @@ type Mutation {
     refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User
     removeFriendship(loggedUserId: ID!, removeFriendshipId: ID!): [User]
     acceptRequest(loggedUserId: ID!, acceptFriendshipId: ID!): [User]!
+    joinCommunity(community_id: ID): Community 
 }
