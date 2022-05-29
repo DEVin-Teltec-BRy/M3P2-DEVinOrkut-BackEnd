@@ -2,7 +2,8 @@
 // cada squad pode criar um arquivo pra resolver na pasta resolvers. Exemplo: FriendsResolvers.js
 const User = require('./UserResolvers');
 const Community = require('./CommunityResolver');
+const Forum = require('./ForumResolvers');
 
-const resolvers = [User, Community];
+const resolvers = [User, Community, Forum];
 
 module.exports = resolvers;
