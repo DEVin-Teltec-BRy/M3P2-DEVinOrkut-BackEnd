@@ -47,8 +47,8 @@ const userResolvers = {
             { dataSources: { users, communities }, userId },
         ) => {
             try {
-                // if (!userId)
-                //     throw new AuthenticationError('you must be logged in');
+                if (!userId)
+                    throw new AuthenticationError('you must be logged in');
 
                 const listUser = await users.searchUserByName(param);
                 const listCommunities = await communities.searchCommunityByName(param);
