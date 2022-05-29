@@ -2,6 +2,6 @@
 type Query {
   user(id: ID!): User
   users: [User]
-  communities: [Community]
+  communities: [Community],
   community(id: ID!): Community
 }
