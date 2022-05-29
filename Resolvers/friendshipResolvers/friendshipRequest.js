@@ -20,7 +20,9 @@ const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { us
   }
   ifFriendOrRequestThrowErro(userRequested.friendRequest, senderId);
   ifFriendOrRequestThrowErro(userRequested.friends, senderId);  
-  userRequested.friendRequest.push(loggedUser);
+  userRequested.friendRequest.push(loggedUser._id);
+  loggedUser.friendRequest.push(userRequested._id);
+
   const sendEmailTo = {
     name: userRequested.fullName,
     email: userRequested.email,
@@ -32,7 +34,9 @@ const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { us
     linkLogo: "http://localhost:3000/assets/imgs/logo.png",
   }
   sendEmail(sendEmailTo, variables, 'invite-friend');
-  return userRequested.save();
+  await loggedUser.save();
+  await userRequested.save();
+  return loggedUser;
 }
 
 module.exports = friendshipRequest
