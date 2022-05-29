@@ -118,7 +118,7 @@ const userResolvers = {
                 });
               }
 
-              const token = jwt.sign({ _id: user._id }, secretKey) 
+              const token = jwt.sign({ userId: user._id }, secretKey)
          
               return {
                   token,
@@ -127,7 +127,9 @@ const userResolvers = {
 
 
           } catch (error) {
-              console.log(error)
+            throw new UserInputError('Email ou senha invalido, tente novamente', {
+                argumentName: 'login',
+            });
           }
         },
         refuseFriendship: friendshipResolvers.declineFriendship,
