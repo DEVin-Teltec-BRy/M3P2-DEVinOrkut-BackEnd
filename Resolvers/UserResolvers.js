@@ -6,10 +6,10 @@ const { UserInputError, AuthenticationError } = require('apollo-server');
 const { passwordValidator } = require('../Helpers/functions');
 const cpfValidator = require('../Helpers/validatorCpf');
 const { typesOfUser } = require('./typesUser')
-const { declineFriendship, friendRequest } = require('./friendshipResolvers');
 const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
 const bcrypt = require('bcryptjs/dist/bcrypt');
+const friendshipResolvers = require('./friendshipResolvers');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -103,8 +103,37 @@ const userResolvers = {
                 console.log(error);
             }
         },
-        refuseFriendship: declineFriendship,
-        requestFriendship: friendRequest,
+        login: async(_, { email, password}, { dataSources: { users } } , info ) => {
+          try {
+              const [user] = await users.findByEmail(email) 
+              if (!user) {
+                throw new UserInputError('Usuario não encontrado', {
+                    argumentName: 'email',
+                });  
+              }
+              const isValid = await brcypt.compare(password, user.password)
+              if (!isValid) {
+                throw new UserInputError('Email ou senha invalido, tente novamente', {
+                    argumentName: 'login',
+                });
+              }
+
+              const token = jwt.sign({ _id: user._id }, secretKey) 
+         
+              return {
+                  token,
+                  user
+              }
+
+
+          } catch (error) {
+              console.log(error)
+          }
+        },
+        refuseFriendship: friendshipResolvers.declineFriendship,
+        requestFriendship: friendshipResolvers.friendRequest,
+        removeFriendship: friendshipResolvers.removeFriendship,
+        acceptRequest: friendshipResolvers.acceptRequest,
         sendEmailresetPassword: async (
             _,
             { user },
