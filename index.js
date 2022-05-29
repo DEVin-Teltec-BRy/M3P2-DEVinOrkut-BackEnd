@@ -1,4 +1,8 @@
 const { ApolloServer } = require('apollo-server-express');
+const {
+    ApolloServerPluginLandingPageLocalDefault,
+    ApolloServerPluginLandingPageProductionDefault,
+} = require('apollo-server-core');
 const express = require('express');
 const path = require('path');
 
@@ -34,6 +38,15 @@ const schemaPath = './schemas/index.graphql';
             users: new Users(db.User),
             communities: new Communities(db.Community),
         }),
+        plugins: [
+            // Install a landing page plugin based on NODE_ENV
+            process.env.NODE_ENV === 'production'
+                ? ApolloServerPluginLandingPageProductionDefault({
+                      graphRef: 'my-graph-id@my-graph-variant',
+                      footer: false,
+                  })
+                : ApolloServerPluginLandingPageLocalDefault({ footer: false }),
+        ],
     });
 
     await server.start();
