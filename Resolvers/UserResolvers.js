@@ -11,6 +11,17 @@ const cpf = new cpfValidator();
 
 // resolvers
 const userResolvers = {
+    SearchResult: {
+        __resolveType(obj) {
+            if (obj.fullName) {
+                return 'User';
+            }
+            if (obj.name) {
+                return 'Community';
+            }
+            return null;
+        },
+    },
     Query: {
         user: async (_, { id }, { dataSources: { users }, userId }) => {
             try {
@@ -26,6 +37,23 @@ const userResolvers = {
                 if (!userId)
                     throw new AuthenticationError('you must be logged in');
                 return users.getAll();
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        searchParam: async (
+            _,
+            { param },
+            { dataSources: { users, communities }, userId },
+        ) => {
+            try {
+                // if (!userId)
+                //     throw new AuthenticationError('you must be logged in');
+
+                const listUser = await users.searchUserByName(param);
+                const listCommunities = await communities.searchCommunityByName(param);
+
+                return [...listUser, ...listCommunities];
             } catch (error) {
                 console.log(error);
             }
