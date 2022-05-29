@@ -19,7 +19,6 @@ type User {
     humor:[String!]
     interests: [String!]
     aboutMe: String!
-    password: String!
     scraps: [ID!]
     testimonial: [ID!]
     trusty: [String]
