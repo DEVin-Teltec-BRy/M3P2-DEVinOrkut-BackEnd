@@ -2,6 +2,7 @@
 type Mutation {
     createCommunity(input: CommunityInput): Community
     createUser(user: UserInput!): AuthPayload!
+    login(email: String!, password: String!):AuthPayload!
     requestFriendship(senderId: ID!, requestedId: ID!): User!
     sendEmailresetPassword(user:UserPassword):String
     changePassword(user:NewPassword):String
