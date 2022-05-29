@@ -1,0 +1,33 @@
+type Forum {
+    id: ID!
+    name: String!
+    logo: String!
+    category: Category!
+    creation_date: Date
+    owner: User!
+    description: String!
+    members: [User!]!
+}
+
+input ForumInput {
+  name: String!
+  logo: String
+  category: Category!
+  owner: User!
+  description: String!
+}
+
+enum Category {
+  BEM_ESTAR
+  DIVERSOS
+  ESPORTES
+  FAMOSOS
+  FILMES
+  GASTRONOMIA
+  JOGOS
+  MUSICA
+  NATUREZA
+  TECNOLOGIA
+}
+
+scalar Date
