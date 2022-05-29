@@ -5,5 +5,5 @@ type Mutation {
     requestFriendship(senderId: ID!, requestedId: ID!): User!
     refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User!
     refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User!
-    acceptRequest(loggedUserId: ID!, acceptFriendshipId: ID!): User!
+    acceptRequest(loggedUserId: ID!, acceptFriendshipId: ID!): [User]!
 }

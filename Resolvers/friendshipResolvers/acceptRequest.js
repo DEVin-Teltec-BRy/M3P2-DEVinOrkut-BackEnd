@@ -22,13 +22,19 @@ const acceptRequest = async (
             'Você está tentando aceitar uma solicitação de amizade que não existe',
         );
     }
+    const userAcceptFriend = await users.getUser(acceptFriendshipId)
+    if(!userAcceptFriend) {
+        throw new UserInputError('Usuário que enviou a solicitação não existe.')
+    }
     const alreadyFriend = loggedUser.friends.find((friendId) => friendId.toString() === acceptFriendshipId);
     if(alreadyFriend) {
         throw new UserInputError('Você já é amigo deste usuário');
     }
+    userAcceptFriend.friends.push(loggedUser._id);
     loggedUser.friends.push(acceptFriendshipId);
     loggedUser.friendRequest.splice(index, 1);
-    return loggedUser.save();
+    await loggedUser.save();
+    return loggedUser.friendRequest;
 };
 
 module.exports = acceptRequest;
