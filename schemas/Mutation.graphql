@@ -3,7 +3,9 @@ type Mutation {
     createCommunity(input: CommunityInput): Community
     createUser(user: UserInput!): AuthPayload!
     requestFriendship(senderId: ID!, requestedId: ID!): User!
-    refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User
     sendEmailresetPassword(user:UserPassword):String
     changePassword(user:NewPassword):String
+    refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User!
+    acceptRequest(loggedUserId: ID!, acceptFriendshipId: ID!): [User]!
+
 }
