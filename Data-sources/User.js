@@ -13,6 +13,9 @@ class Users extends MongoDataSource {
     findByEmail(email) {
         return this.findByFields({ email });
     }
+    searchUserByName(name){
+        return this.model.find({fullName: {$regex:name, $options: "i"}});
+    }
 }
 
 module.exports = Users;

@@ -10,6 +10,9 @@ class Community extends MongoDataSource {
     joinCommunity(community) {
         return this.model.findByIdAndUpdate(community);
     }
+    searchCommunityByName(name) {
+        return this.model.find({ name: { $regex: name, $options: 'i' } });
+    }
 }
 
 module.exports = Community;

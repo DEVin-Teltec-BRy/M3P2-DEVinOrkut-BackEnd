@@ -1,9 +1,13 @@
 const { ApolloServer } = require('apollo-server-express');
+const {
+    ApolloServerPluginLandingPageLocalDefault,
+    ApolloServerPluginLandingPageProductionDefault,
+} = require('apollo-server-core');
 const express = require('express');
 const path = require('path');
 
 const { importSchema } = require('graphql-import');
-const { port } = require('./Config/Environment');
+const { port, jwtAccessTokenSecret } = require('./Config/Environment');
 const resolvers = require('./Resolvers');
 
 const db = require('./Db');
@@ -13,6 +17,7 @@ const Users = require('./Data-sources/User');
 const Communities = require('./Data-sources/Community');
 
 const { getUserId } = require('./Helpers/functions');
+const jsonwebtoken = require('jsonwebtoken');
 
 const schemaPath = './schemas/index.graphql';
 
@@ -25,7 +30,6 @@ const schemaPath = './schemas/index.graphql';
         tracing: true,
         context: ({ req }) => {
             return {
-                db,
                 userId:
                     req && req.headers.authorization ? getUserId(req) : null,
             };
@@ -34,6 +38,15 @@ const schemaPath = './schemas/index.graphql';
             users: new Users(db.User),
             communities: new Communities(db.Community),
         }),
+        plugins: [
+            // Install a landing page plugin based on NODE_ENV
+            process.env.NODE_ENV === 'production'
+                ? ApolloServerPluginLandingPageProductionDefault({
+                      graphRef: 'my-graph-id@my-graph-variant',
+                      footer: false,
+                  })
+                : ApolloServerPluginLandingPageLocalDefault({ footer: false }),
+        ],
     });
 
     await server.start();
@@ -48,7 +61,7 @@ const schemaPath = './schemas/index.graphql';
 
     await new Promise(resolve => app.listen({ port: port }, resolve));
     console.log(
-        `🚀 Server ready at http://localhost:4000${server.graphqlPath}`,
+        `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`,
     );
     return { server, app };
 })();

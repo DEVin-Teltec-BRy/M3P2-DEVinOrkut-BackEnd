@@ -1,7 +1,11 @@
+const { UserInputError } = require('apollo-server');
 const jwt = require('jsonwebtoken');
+const environment = require('../Config/Environment');
+
+const secretKey = environment.jwtAccessTokenSecret;
 
 function getTokenPayload(token) {
-    return jwt.verify(token, process.env.APP_SECRET);
+    return jwt.verify(token, secretKey);
 }
 
 function getUserId(req, authToken) {
@@ -29,7 +33,16 @@ function passwordValidator(password) {
     );
 }
 
+const ifFriendOrRequestThrowErro = (arrObjIds, userId) => {
+    const hasResult = arrObjIds.find(objectId => objectId.toString() === userId);
+    if(hasResult) {
+      throw new UserInputError('Usuário ja é seu amigo ou ja existe uma solicitação.', {
+        argumentName: 'requestedId',
+      });
+    }
+  }
 module.exports = {
     getUserId,
     passwordValidator,
+    ifFriendOrRequestThrowErro,
 };

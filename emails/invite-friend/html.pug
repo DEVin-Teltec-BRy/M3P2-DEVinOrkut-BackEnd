@@ -2,17 +2,17 @@ table(style="width:100%; max-width: 800px; margin: 0 auto; box-shadow: 0px 0px 5
     thead(style="background-color: #779DCD; height: 100px;")
         tr(style="text-indent: 20px;")
             td
-                img(style="width: 130px" src="http://localhost:3000/assets/imgs/logo.png" alt="Logo")
+                img(style="width: 130px" src=`${linkLogo}` alt="Logo")
     tbody(style="background-color: #ffffff; height: 100px; padding: 30px;")
         tr
             td
                 div(style="padding: 30px;")
-                    p Olá Daniel, você conhece o(a) usuário(a) #{senderName}?
+                    p Olá #{user.name}, você conhece o(a) usuário(a) #{senderName}?
                     p #{senderName} enviou uma solicitação de amizade.
                     br
                     p Para aceitar clique no botão abaixo.
-                    a(href="#{link}" style="background-color:#428bca;box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);cursor:pointer;text-decoration:none;color:white;border-radius:4px;font-size:14px;padding:6px 12px;") Aceitar amizade de #{senderName}.
+                    a(href=`${redirectLink}` style="background-color:#428bca;box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);cursor:pointer;text-decoration:none;color:white;border-radius:4px;font-size:14px;padding:6px 12px;") Aceitar amizade de #{senderName}.
     tfoot(style="background-color: #779DCD; height: 100px; margin-top: 20px;")
         tr(style="text-indent: 20px;")
             td
-                img(style="width: 130px" src="#{host}/assets/imgs/logo.png" alt="Logo")
+                img(style="width: 130px" src=`${linkLogo}` alt="Logo")
