@@ -4,4 +4,6 @@ type Mutation {
     createUser(user: UserInput!): AuthPayload!
     requestFriendship(senderId: ID!, requestedId: ID!): User!
     refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User
+    sendEmailresetPassword(user:UserPassword):String
+    changePassword(user:NewPassword):String
 }
