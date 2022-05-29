@@ -7,6 +7,9 @@ class Community extends MongoDataSource {
     getAll() {
         return this.model.find();
     }
+    searchCommunityByName(name){
+        return this.model.find({name: {$regex:name, $options: "i"}});
+    }
 }
 
 module.exports = Community;
