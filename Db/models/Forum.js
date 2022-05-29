@@ -38,6 +38,11 @@ const ForumSchema = mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    community: {
+        type: Schema.Types.ObjectId,
+        ref: 'Community',
+        required: true,
+    },
     members: [
         {
             type: Schema.Types.ObjectId,
