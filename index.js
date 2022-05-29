@@ -60,9 +60,6 @@ const schemaPath = './schemas/index.graphql';
     app.use(express.static(path.join(__dirname, 'public')));
 
     await new Promise(resolve => app.listen({ port: port }, resolve));
-    const idElon = "62935f850f9f3ac24503724e"
-    const token = jsonwebtoken.sign({userId: idElon}, jwtAccessTokenSecret)
-    console.log(token)
     console.log(
         `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`,
     );
