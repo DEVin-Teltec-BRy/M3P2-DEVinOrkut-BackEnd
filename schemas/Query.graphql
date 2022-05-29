@@ -1,7 +1,9 @@
 # aqui serão declaradas todas as queries
+union SearchResult = User | Community
 type Query {
   user(id: ID!): User
   users: [User]
   communities: [Community]
-  community(id: ID!): Community
+  community(id: ID!): Community,
+  searchParam(param: String): [SearchResult!]
 }
