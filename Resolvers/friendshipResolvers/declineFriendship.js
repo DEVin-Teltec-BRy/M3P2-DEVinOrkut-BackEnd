@@ -9,8 +9,6 @@ const declineFriendship = async (
     if (!loggedUser) {
         throw new UserInputError('Você precisa estar logado para fazer isso');
     }
-    console.log(loggedUserId);
-    console.log(userId)
     if (loggedUserId !== userId) {
         throw new UserInputError(
             'O usuário que esta tentando recusar a solicitação de amizade não é o mesmo que está logado',

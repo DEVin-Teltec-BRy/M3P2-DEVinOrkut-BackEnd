@@ -5,5 +5,5 @@ type Mutation {
     login(email: String!, password: String!):AuthPayload!
     requestFriendship(senderId: ID!, requestedId: ID!): User!
     refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User
-
+    acceptRequest(loggedUserId: ID!, acceptFriendshipId: ID!): [User]!
 }
