@@ -29,7 +29,6 @@ const schemaPath = './schemas/index.graphql';
         tracing: true,
         context: ({ req }) => {
             return {
-                db,
                 userId:
                     req && req.headers.authorization ? getUserId(req) : null,
             };
@@ -61,7 +60,7 @@ const schemaPath = './schemas/index.graphql';
 
     await new Promise(resolve => app.listen({ port: port }, resolve));
     console.log(
-        `🚀 Server ready at http://localhost:4000${server.graphqlPath}`,
+        `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`,
     );
     return { server, app };
 })();

@@ -1,6 +1,6 @@
 const path = require('path')
 
-const { configEmail } = require('../config/environment');
+const { configEmail } = require('../Config/Environment');
 
 const nodemailer = require('nodemailer')
 const Email = require('email-templates');
@@ -9,18 +9,11 @@ const transport = nodemailer.createTransport(configEmail)
 
 const email = new Email({
   message: {
-    from: 'no-reply@orkut.com'
+    from: 'no-reply@orkut.com',
   },
   send: true,
-  transport,
-  preview: {
-    open: {
-      app: 'firefox',
-      wait: false
-    }
-  }
+  transport
 });
-
 /**
  * Função para enviar email
  * @param {Object} user É o usuario de destino do email dados minimos: email e nome.
@@ -30,16 +23,16 @@ const email = new Email({
  */
 const sendEmail = async (user, variables, templateName) => {
     try {
-     return await email.send({
-        template: templateName,
-        message: {
-          to: user.email
-        },
-        locals: {...variables, user},
-        preview: false,
-      })
-    } catch (error) {
-        throw new Error("Erro no envio do email: "+ error.message);
-    }
-}
-module.exports = sendEmail;
+        return await email.send({
+            template: templateName,
+            message: {
+                to: user.email
+            },
+            locals: {...variables, user},
+            preview: false,
+            })
+        } catch (error) {
+            throw new Error("Erro no envio do email: "+ error.message);
+       }
+   }
+   module.exports = sendEmail;
