@@ -68,7 +68,7 @@ $ yarn ou npm install
 
 ```bash
 # Criar um arquivo .env a partir do arquivo .env.sample
-# As variaveis utilizadas no sistema devem ser preenchidas conforme suas configurações locais
+# As variáveis utilizadas no sistema devem ser preenchidas conforme suas configurações locais
 ```
 
 ```bash
@@ -78,11 +78,11 @@ $ yarn dev
 $ npm run dev
 ```
 
-## 👨‍💻 Equipes de denvolvimento
+## 👨‍💻 Equipes de desenvolvimento
 
 <a id="equipes"></a>
 
-💜 Todos os membros da equipe estão de parabéns, desenpenharam um papel indispensavel durante todo o desenvolvimento da aplicação 👏
+💜 Todos os membros da equipe estão de parabéns, desempenharam um papel indispensável durante todo o desenvolvimento da aplicação 👏
 
 <h2 style="color:#E01C8B">Squad 01</h2>
 

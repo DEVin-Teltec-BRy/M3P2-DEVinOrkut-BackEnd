@@ -19,7 +19,6 @@ type User {
     humor:[String!]
     interests: [String!]
     aboutMe: String!
-    password: String!
     scraps: [ID!]
     testimonial: [ID!]
     trusty: [String]
@@ -28,12 +27,21 @@ type User {
     fans: [ID!]
     profilePicture: [String]
     album: [ID]
-    friends: [ID]
-    friendRequest: [ID]
+    friends: [User]!
+    friendRequest: [User]!
     communities: [ID]
     createAt: Date
     updated: Date
 
+}
+input UserPassword {
+    email:String!
+}
+
+input NewPassword {
+    token:String!
+    newPassword:String!
+    confirmPassword:String!
 }
 
 input UserInput {
