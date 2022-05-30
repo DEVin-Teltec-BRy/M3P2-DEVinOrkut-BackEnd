@@ -18,12 +18,14 @@ const Users = require('./Data-sources/User');
 const Communities = require('./Data-sources/Community');
 
 const { getUserId } = require('./Helpers/functions');
-const uploadRoute = require('./Router/uploadRoute');
 
 const schemaPath = './schemas/index.graphql';
 
 (async function startApolloServer() {
     const app = express();
+    app.use(cors());
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
 
     const server = new ApolloServer({
         typeDefs: importSchema(schemaPath),
@@ -56,14 +58,12 @@ const schemaPath = './schemas/index.graphql';
 
     server.applyMiddleware({ app });
 
-    app.use(express.json());
-
-    app.use('/upload', express.static(path.join(__dirname, 'uploads')));
     app.get('/', (req, res) => {
         res.redirect('/graphql');
     });
 
     app.use(express.static(path.join(__dirname, 'public')));
+    app.use('/', require('./Router/uploadRoute'));
 
     await new Promise(resolve => app.listen({ port: port }, resolve));
     console.log(

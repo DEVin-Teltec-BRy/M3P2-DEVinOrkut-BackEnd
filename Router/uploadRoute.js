@@ -1,12 +1,8 @@
-'use strict';
-
 const express = require('express');
-const { upload } = require('../Helpers/imageUpload');
-const { singleFileUpload } = require('../Controllers/uploadController');
-const router = express.Router();
+const store = require('../Helpers/multer');
+const { uploads } = require('../Controllers/uploadController');
+const route = express.Router();
 
-router.post('/singlefile', upload.single('file'), singleFileUpload);
+route.post('/upload', store.array('images', 12), uploads);
 
-module.exports = {
-    routes: router,
-};
+module.exports = route;
