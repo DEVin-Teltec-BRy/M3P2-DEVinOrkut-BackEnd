@@ -54,7 +54,7 @@ const communityResolvers = {
             try {
                 if (!userId) {
                     throw new Error(
-                        'Você precisa estar logado para criar uma comunidade.',
+                        'Você precisa estar logado para entrar na comunidade.',
                     );
                 }
 

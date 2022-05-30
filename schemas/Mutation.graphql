@@ -10,4 +10,5 @@ type Mutation {
     removeFriendship(loggedUserId: ID!, removeFriendshipId: ID!): [User]
     acceptRequest(loggedUserId: ID!, acceptFriendshipId: ID!): [User]!
     joinCommunity(community_id: ID): Community 
+    createForum(input: ForumInput): Forum
 }
