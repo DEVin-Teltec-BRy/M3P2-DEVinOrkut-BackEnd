@@ -4,6 +4,7 @@ const {
     ApolloServerPluginLandingPageProductionDefault,
 } = require('apollo-server-core');
 const express = require('express');
+const cors = require('cors');
 const path = require('path');
 
 const { importSchema } = require('graphql-import');
@@ -23,6 +24,10 @@ const schemaPath = './schemas/index.graphql';
 
 (async function startApolloServer() {
     const app = express();
+    app.use(cors());
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+
     const server = new ApolloServer({
         typeDefs: importSchema(schemaPath),
         resolvers,
@@ -58,6 +63,7 @@ const schemaPath = './schemas/index.graphql';
     });
 
     app.use(express.static(path.join(__dirname, 'public')));
+    app.use('/', require('./Router/uploadRoute'));
 
     await new Promise(resolve => app.listen({ port: port }, resolve));
     console.log(
