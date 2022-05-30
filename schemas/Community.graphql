@@ -6,6 +6,7 @@ type Community {
     category: Category!
     creation_date: Date
     members: [User!]!
+    foruns: [Forum]!
 }
 
 input CommunityInput {

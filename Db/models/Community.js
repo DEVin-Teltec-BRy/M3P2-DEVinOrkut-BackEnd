@@ -43,6 +43,13 @@ const CommunitySchema = mongoose.Schema({
             required: false,
         },
     ],
+    foruns: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Forum',
+            required: false,
+        },
+    ],
 });
 
 module.exports = mongoose.model('Community', CommunitySchema);

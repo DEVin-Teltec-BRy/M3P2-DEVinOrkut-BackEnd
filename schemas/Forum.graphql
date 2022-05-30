@@ -13,23 +13,7 @@ type Forum {
 input ForumInput {
   name: String!
   logo: String
-  category: Category!
-  owner: User!
+  category: ID!
   description: String!
   community: ID!
 }
-
-enum Category {
-  BEM_ESTAR
-  DIVERSOS
-  ESPORTES
-  FAMOSOS
-  FILMES
-  GASTRONOMIA
-  JOGOS
-  MUSICA
-  NATUREZA
-  TECNOLOGIA
-}
-
-scalar Date
