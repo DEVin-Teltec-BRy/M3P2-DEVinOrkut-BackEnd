@@ -2,8 +2,10 @@ const UploadModel = require('../Db/models/upload');
 const fs = require('fs');
 
 const uploads = (req, res) => {
+    const user = req.user;
+    console.log(user);
+
     const files = req.files;
-    console.log(files);
 
     if (!files) {
         res.status(400).send('Please choose file');
