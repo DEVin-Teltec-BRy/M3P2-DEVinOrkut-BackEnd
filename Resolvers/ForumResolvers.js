@@ -46,6 +46,11 @@ const forumResolvers = {
                     { $push: { foruns: newForum._id } },
                 );
 
+                await Forum.findOneAndUpdate(
+                    { _id: newForum._id },
+                    { $push: { members: userId } },
+                );
+
                 return newForum;
             } catch (error) {
                 throw new Error(error);
