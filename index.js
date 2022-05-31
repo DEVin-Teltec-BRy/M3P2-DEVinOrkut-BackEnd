@@ -14,10 +14,13 @@ const resolvers = require('./Resolvers');
 const db = require('./Db');
 require('./Db/start');
 
-const Users = require('./Data-sources/User');
-const Communities = require('./Data-sources/Community');
-const Foruns = require('./Data-sources/Forum');
-const Coments = require('./Data-sources/Coments');
+
+// const Users = require('./Data-sources/User');
+// const Communities = require('./Data-sources/Community');
+// const Foruns = require('./Data-sources/Forum');
+
+const { Users, Communities, Foruns, Coments } = require('./Data-sources');
+
 
 const { getUserId } = require('./Helpers/functions');
 
@@ -34,6 +37,10 @@ const schemaPath = './schemas/index.graphql';
         resolvers,
         playground: true,
         tracing: true,
+        cors: {
+            origin: '*',
+            credentials: true,
+        },
         context: ({ req }) => {
             return {
                 userId:

@@ -33,7 +33,7 @@ const userResolvers = {
                     throw new AuthenticationError('you must be logged in');
                 return users.getUser(id);
             } catch (error) {
-                console.log(error);
+                throw new Error(error);
             }
         },
         users: async (_, __, { dataSources: { users }, userId }) => {
@@ -42,7 +42,7 @@ const userResolvers = {
                     throw new AuthenticationError('you must be logged in');
                 return users.getAll();
             } catch (error) {
-                console.log(error);
+                throw new Error(error);
             }
         },
         searchParam: async (
@@ -94,8 +94,10 @@ const userResolvers = {
 
                 const password = await brcypt.hash(user.password, 10);
                 const userCreated = await users.create({ ...user, password });
-                //adicionar expires.
-                const token = jwt.sign({ userId: userCreated._id }, secretKey);
+
+                const token = jwt.sign({ userId: userCreated._id }, secretKey, {
+                    expiresIn: '1d',
+                });
 
                 return {
                     token,
@@ -127,7 +129,9 @@ const userResolvers = {
                     );
                 }
 
-                const token = jwt.sign({ userId: user._id }, secretKey);
+                const token = jwt.sign({ userId: user._id }, secretKey, {
+                    expiresIn: '1d',
+                });
 
                 return {
                     token,
