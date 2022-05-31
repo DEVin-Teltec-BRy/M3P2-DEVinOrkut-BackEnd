@@ -193,7 +193,7 @@ const userResolvers = {
                     user.token,
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                 );
-                console.log(validatingToken);
+                
                 const email = validatingToken.email;
                 const hashedPass = await bcrypt.hash(user.newPassword, 10);
                 const updatePassword = await Users.updateOne(
@@ -202,7 +202,9 @@ const userResolvers = {
                 );
                 return `Nova senha cadastrada com sucesso.`;
             } catch (error) {
-                return error;
+               
+               if(Object.hasOwn(error,"expiredAt")) return "Token Expirado"
+               return error
             }
         },
     },
