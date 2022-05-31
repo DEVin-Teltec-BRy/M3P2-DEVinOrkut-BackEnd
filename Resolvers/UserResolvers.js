@@ -149,11 +149,12 @@ const userResolvers = {
                         argumentName: 'email',
                     });
                 }
+                console.log(user.email)
                 const gmail = user.email;
                 const existingUser = await users.findByEmail(gmail);
                 console.log(existingUser);
                 if (existingUser.length === 0)
-                    return `Email enviado para ${user.email}`;
+                    return `Email enviado`;
                 const Token = jwt.sign(
                     { email: gmail },
                     process.env.JWT_ACCESS_TOKEN_SECRET,
@@ -166,13 +167,13 @@ const userResolvers = {
                 console.log(Token);
                 //enviar token no link
                 const variables = {
-                    link: `localhost:3000/resetpassword/${Token}`,
+                    link: `http://localhost:3000/resetpassword/${Token}`,
                 };
                 sendEmail(userObject, variables, '../emails/reset-password');
 
-                return `Email enviado para ${user.email}`;
+                return `Email enviado`;
             } catch (error) {
-                return 'Email enviado';
+                return error;
             }
         },
         changePassword: async (_, { user }, { dataSources: { users } }) => {

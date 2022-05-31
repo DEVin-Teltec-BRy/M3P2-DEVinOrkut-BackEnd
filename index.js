@@ -1,4 +1,5 @@
 const { ApolloServer } = require('apollo-server-express');
+const cors = require('cors')
 const {
     ApolloServerPluginLandingPageLocalDefault,
     ApolloServerPluginLandingPageProductionDefault,
@@ -24,10 +25,13 @@ const schemaPath = './schemas/index.graphql';
 (async function startApolloServer() {
     const app = express();
     const server = new ApolloServer({
+        
         typeDefs: importSchema(schemaPath),
         resolvers,
         playground: true,
         tracing: true,
+        
+        
         context: ({ req }) => {
             return {
                 userId:
@@ -58,7 +62,7 @@ const schemaPath = './schemas/index.graphql';
     });
 
     app.use(express.static(path.join(__dirname, 'public')));
-
+    app.use(cors())
     await new Promise(resolve => app.listen({ port: port }, resolve));
     console.log(
         `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`,
