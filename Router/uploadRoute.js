@@ -4,6 +4,6 @@ const auth = require('../Helpers/auth');
 const { uploads } = require('../Controllers/uploadController');
 const route = express.Router();
 
-route.post('/upload', auth, store.array('images', 12), uploads);
+route.post('/upload', auth, store.single('images'), uploads);
 
 module.exports = route;

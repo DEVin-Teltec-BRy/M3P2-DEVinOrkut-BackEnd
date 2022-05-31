@@ -41,12 +41,38 @@ const UserSchema = new Schema({
             ref: 'User',
         },
     ],
-    profilePicture: [Buffer],
+    profilePicture: [
+        {
+            filename: {
+                type: String,
+                unique: true,
+                required: true,
+            },
+            contentType: {
+                type: String,
+                required: true,
+            },
+            imageBase64: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
     album: [
         {
-            type: Schema.Types.ObjectId,
-            ref: 'Album',
-            required: false,
+            filename: {
+                type: String,
+                unique: true,
+                required: true,
+            },
+            contentType: {
+                type: String,
+                required: true,
+            },
+            imageBase64: {
+                type: String,
+                required: true,
+            },
         },
     ],
     friends: [
