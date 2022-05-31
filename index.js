@@ -33,6 +33,10 @@ const schemaPath = './schemas/index.graphql';
         resolvers,
         playground: true,
         tracing: true,
+        cors: {
+            origin: '*',
+            credentials: true,
+        },
         context: ({ req }) => {
             return {
                 userId:
