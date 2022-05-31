@@ -1,19 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const CommunitySchema = mongoose.Schema({
-    logo: {
-        type: String,
-        required: true,
-    },
+const ForumSchema = mongoose.Schema({
     name: {
         type: String,
         unique: true,
         required: true,
     },
-    description: {
+    logo: {
         type: String,
-        unique: true,
         required: true,
     },
     category: {
@@ -31,10 +26,22 @@ const CommunitySchema = mongoose.Schema({
             'TECNOLOGIA',
         ],
         default: 'DIVERSOS',
+        required: true,
     },
-    creation_date: {
-        type: Date,
-        default: Date.now(),
+    description: {
+        type: String,
+        unique: true,
+        required: true,
+    },
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    community: {
+        type: Schema.Types.ObjectId,
+        ref: 'Community',
+        required: true,
     },
     members: [
         {
@@ -43,13 +50,10 @@ const CommunitySchema = mongoose.Schema({
             required: false,
         },
     ],
-    foruns: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Forum',
-            required: false,
-        },
-    ],
+    creation_date: {
+        type: Date,
+        default: Date.now(),
+    },
 });
 
-module.exports = mongoose.model('Community', CommunitySchema);
+module.exports = mongoose.model('Forum', ForumSchema);

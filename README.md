@@ -184,5 +184,10 @@ $ npm run dev
          <sub><b>Ramon Telles</b></sub>
          <br/>
       </td>	
+       <td align="center">
+         <img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/claudiorhenns" width="80px;" alt="avatar Claudio"/><br />
+         <sub><b>Claudio Rhenns</b></sub>
+         <br/>
+      </td>	
    </tr>
 </table>
