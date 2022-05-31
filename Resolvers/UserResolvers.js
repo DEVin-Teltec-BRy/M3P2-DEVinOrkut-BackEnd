@@ -1,4 +1,4 @@
-const brcypt = require('bcryptjs/dist/bcrypt');
+const bcrypt = require('bcryptjs/dist/bcrypt');
 const jwt = require('jsonwebtoken');
 const environment = require('../Config/Environment');
 const validator = require('validator');
@@ -92,7 +92,7 @@ const userResolvers = {
                     });
                 }
 
-                const password = await brcypt.hash(user.password, 10);
+                const password = await bcrypt.hash(user.password, 10);
                 const userCreated = await users.create({ ...user, password });
                 //adicionar expires.
                 const token = jwt.sign({ userId: userCreated._id }, secretKey);
@@ -117,7 +117,7 @@ const userResolvers = {
                         argumentName: 'email',
                     });
                 }
-                const isValid = await brcypt.compare(password, user.password);
+                const isValid = await bcrypt.compare(password, user.password);
                 if (!isValid) {
                     throw new UserInputError(
                         'Email ou senha invalido, tente novamente',
