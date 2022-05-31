@@ -168,15 +168,15 @@ const userResolvers = {
                     { email: gmail },
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                     { expiresIn: '15m' },
-                );
+                );  
                 const userObject = {
                     fullName: 'Usuário DEVinOrkut',
                     email: user.email,
                 };
-                console.log(Token);
+                console.log(Token); 
                 //enviar token no link
                 const variables = {
-                    link: `localhost:3000/resetpassword/${Token}`,
+                    redirectLink: `http://localhost:3000/resetpass/${Token}`,
                 };
                 sendEmail(userObject, variables, '../emails/reset-password');
 
