@@ -3,7 +3,8 @@
 const User = require('./UserResolvers');
 const Community = require('./CommunityResolver');
 const Forum = require('./ForumResolvers');
+const Coment = require('./ComentResolver');
 
-const resolvers = [User, Community, Forum];
+const resolvers = [User, Community, Forum, Coment];
 
 module.exports = resolvers;

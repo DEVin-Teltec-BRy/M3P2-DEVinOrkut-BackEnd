@@ -50,6 +50,13 @@ const ForumSchema = mongoose.Schema({
             required: false,
         },
     ],
+    coments: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Coments',
+            required: false,
+        },
+    ],
     creation_date: {
         type: Date,
         default: Date.now(),

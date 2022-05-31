@@ -17,6 +17,7 @@ require('./Db/start');
 const Users = require('./Data-sources/User');
 const Communities = require('./Data-sources/Community');
 const Foruns = require('./Data-sources/Forum');
+const Coments = require('./Data-sources/Coments');
 
 const { getUserId } = require('./Helpers/functions');
 
@@ -43,6 +44,7 @@ const schemaPath = './schemas/index.graphql';
             users: new Users(db.User),
             communities: new Communities(db.Community),
             foruns: new Foruns(db.Forum),
+            coments: new Coments(db.Coment),
         }),
         plugins: [
             // Install a landing page plugin based on NODE_ENV
