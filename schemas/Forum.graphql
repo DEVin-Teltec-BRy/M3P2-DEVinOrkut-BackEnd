@@ -7,7 +7,7 @@ type Forum {
     owner: User!
     description: String!
     members: [User!]!
-    comments: [String]!
+    comments: [Coments]!
 }
 
 input ForumInput {

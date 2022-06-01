@@ -11,4 +11,5 @@ type Mutation {
     acceptRequest(loggedUserId: ID!, acceptFriendshipId: ID!): [User]!
     joinCommunity(community_id: ID): Community 
     createForum(input: ForumInput): Forum
+    createComent(input: ComentInput): Coments
 }
