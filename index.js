@@ -8,18 +8,19 @@ const cors = require('cors');
 const path = require('path');
 
 const { importSchema } = require('graphql-import');
-const { port, jwtAccessTokenSecret } = require('./Config/Environment');
+const { port } = require('./Config/Environment');
 const resolvers = require('./Resolvers');
 
 const db = require('./Db');
 require('./Db/start');
 
-const Users = require('./Data-sources/User');
-const Communities = require('./Data-sources/Community');
-const Foruns = require('./Data-sources/Forum');
+// const Users = require('./Data-sources/User');
+// const Communities = require('./Data-sources/Community');
+// const Foruns = require('./Data-sources/Forum');
+
+const { Users, Communities, Foruns } = require('./Data-sources');
 
 const { getUserId } = require('./Helpers/functions');
-const jsonwebtoken = require('jsonwebtoken');
 
 const schemaPath = './schemas/index.graphql';
 
@@ -34,6 +35,10 @@ const schemaPath = './schemas/index.graphql';
         resolvers,
         playground: true,
         tracing: true,
+        cors: {
+            origin: '*',
+            credentials: true,
+        },
         context: ({ req }) => {
             return {
                 userId:
