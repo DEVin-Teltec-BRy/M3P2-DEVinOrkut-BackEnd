@@ -76,6 +76,40 @@ const communityResolvers = {
                 throw new Error(`${error.message}`);
             }
         },
+        editCommunity: async (
+            _,
+            { community_id, input },
+            { dataSources: { communities }, userId },
+        ) => {
+            try {
+                if (!userId) {
+                    throw new Error(
+                        'Você precisa estar logado para visualizar a comunidade.',
+                    );
+                }
+
+                const community = await communities.getCommunityByIt(community_id);
+                const isOwner = community.owner == userId;
+
+                if(!isOwner) {
+                    return community
+                }
+
+                const inputDatas = {
+                    logo: input.logo,
+                    name: input.name,
+                    description: input.description,
+                    category: input.category,
+                 };
+
+                const updateCommunity = await communities.updateCommunity(community_id, inputDatas)
+
+                return updateCommunity
+
+            } catch (error) {
+                throw new Error(`${error.message}`);
+            }
+        },
     },
     Community: {
         members: async (
