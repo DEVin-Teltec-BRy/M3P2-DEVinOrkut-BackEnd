@@ -1,9 +1,9 @@
 const { MongoDataSource } = require('apollo-datasource-mongodb');
 
-class Forum extends MongoDataSource {
+class Coment extends MongoDataSource {
     create(coments) {
         return this.model.create(coments);
     }
 }
 
-module.exports = Forum;
+module.exports = Coment;
