@@ -18,7 +18,7 @@ const communityResolvers = {
         createCommunity: async (
             _,
             { input },
-            { dataSources: { communities, userId } },
+            { dataSources: { communities }, userId },
         ) => {
             try {
                 // if (!userId) {
@@ -40,6 +40,7 @@ const communityResolvers = {
                     logo: input.logo,
                     description: input.description,
                     category: input.category,
+                    owner: userId,
                 });
                 return newCommunity;
             } catch (err) {
