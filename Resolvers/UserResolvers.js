@@ -1,14 +1,13 @@
-const brcypt = require('bcryptjs/dist/bcrypt');
+const bcrypt = require('bcryptjs/dist/bcrypt');
 const jwt = require('jsonwebtoken');
 const environment = require('../Config/Environment');
 const validator = require('validator');
 const { UserInputError, AuthenticationError } = require('apollo-server');
 const { passwordValidator } = require('../Helpers/functions');
 const cpfValidator = require('../Helpers/validatorCpf');
-const { typesOfUser } = require('./typesUser')
+const { typesOfUser } = require('./typesUser');
 const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
-const bcrypt = require('bcryptjs/dist/bcrypt');
 const friendshipResolvers = require('./friendshipResolvers');
 
 const secretKey = environment.jwtAccessTokenSecret;
@@ -34,7 +33,7 @@ const userResolvers = {
                     throw new AuthenticationError('you must be logged in');
                 return users.getUser(id);
             } catch (error) {
-                console.log(error);
+                throw new Error(error);
             }
         },
         users: async (_, __, { dataSources: { users }, userId }) => {
@@ -43,7 +42,7 @@ const userResolvers = {
                     throw new AuthenticationError('you must be logged in');
                 return users.getAll();
             } catch (error) {
-                console.log(error);
+                throw new Error(error);
             }
         },
         searchParam: async (
@@ -56,7 +55,9 @@ const userResolvers = {
                     throw new AuthenticationError('you must be logged in');
 
                 const listUser = await users.searchUserByName(param);
-                const listCommunities = await communities.searchCommunityByName(param);
+                const listCommunities = await communities.searchCommunityByName(
+                    param,
+                );
 
                 return [...listUser, ...listCommunities];
             } catch (error) {
@@ -91,10 +92,12 @@ const userResolvers = {
                     });
                 }
 
-                const password = await brcypt.hash(user.password, 10);
+                const password = await bcrypt.hash(user.password, 10);
                 const userCreated = await users.create({ ...user, password });
-                //adicionar expires.
-                const token = jwt.sign({ userId: userCreated._id }, secretKey);
+
+                const token = jwt.sign({ userId: userCreated._id }, secretKey, {
+                    expiresIn: '1d',
+                });
 
                 return {
                     token,
@@ -103,40 +106,51 @@ const userResolvers = {
                 console.log(error);
             }
         },
-        login: async(_, { email, password}, { dataSources: { users } } , info ) => {
-          try {
-              const [user] = await users.findByEmail(email) 
-              if (!user) {
-                throw new UserInputError('Usuario não encontrado', {
-                    argumentName: 'email',
-                });  
-              }
-              const isValid = await brcypt.compare(password, user.password)
-              if (!isValid) {
-                throw new UserInputError('Email ou senha invalido, tente novamente', {
-                    argumentName: 'login',
+        login: async (
+            _,
+            { email, password },
+            { dataSources: { users } },
+            info,
+        ) => {
+            try {
+                const [user] = await users.findByEmail(email);
+                if (!user) {
+                    throw new UserInputError('Usuario não encontrado', {
+                        argumentName: 'email',
+                    });
+                }
+                const isValid = await bcrypt.compare(password, user.password);
+                if (!isValid) {
+                    throw new UserInputError(
+                        'Email ou senha invalido, tente novamente',
+                        {
+                            argumentName: 'login',
+                        },
+                    );
+                }
+
+                const token = jwt.sign({ userId: user._id }, secretKey, {
+                    expiresIn: '1d',
                 });
-              }
 
-              const token = jwt.sign({ userId: user._id }, secretKey)
-         
-              return {
-                  token,
-                  user
-              }
-
-
-          } catch (error) {
-            throw new UserInputError('Email ou senha invalido, tente novamente', {
-                argumentName: 'login',
-            });
-          }
+                return {
+                    token,
+                    user,
+                };
+            } catch (error) {
+                throw new UserInputError(
+                    'Email ou senha invalido, tente novamente',
+                    {
+                        argumentName: 'login',
+                    },
+                );
+            }
         },
         refuseFriendship: friendshipResolvers.declineFriendship,
         requestFriendship: friendshipResolvers.friendRequest,
         removeFriendship: friendshipResolvers.removeFriendship,
         acceptRequest: friendshipResolvers.acceptRequest,
-    
+
         sendEmailresetPassword: async (
             _,
             { user },
@@ -158,15 +172,15 @@ const userResolvers = {
                     { email: gmail },
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                     { expiresIn: '15m' },
-                );
+                );  
                 const userObject = {
                     fullName: 'Usuário DEVinOrkut',
                     email: user.email,
                 };
-                console.log(Token);
+                console.log(Token); 
                 //enviar token no link
                 const variables = {
-                    link: `localhost:3000/resetpassword/${Token}`,
+                    redirectLink: `http://localhost:3000/resetpass/${Token}`,
                 };
                 sendEmail(userObject, variables, '../emails/reset-password');
 
@@ -183,7 +197,7 @@ const userResolvers = {
                     user.token,
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                 );
-                console.log(validatingToken);
+                
                 const email = validatingToken.email;
                 const hashedPass = await bcrypt.hash(user.newPassword, 10);
                 const updatePassword = await Users.updateOne(
@@ -192,11 +206,13 @@ const userResolvers = {
                 );
                 return `Nova senha cadastrada com sucesso.`;
             } catch (error) {
-                return error;
+               
+               if(Object.hasOwn(error,"expiredAt")) return "Token Expirado"
+               return error
             }
         },
     },
-    User:typesOfUser
+    User: typesOfUser,
 };
 
 module.exports = userResolvers;

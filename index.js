@@ -8,18 +8,21 @@ const cors = require('cors');
 const path = require('path');
 
 const { importSchema } = require('graphql-import');
-const { port, jwtAccessTokenSecret } = require('./Config/Environment');
+const { port } = require('./Config/Environment');
 const resolvers = require('./Resolvers');
 
 const db = require('./Db');
 require('./Db/start');
 
-const Users = require('./Data-sources/User');
-const Communities = require('./Data-sources/Community');
-const Foruns = require('./Data-sources/Forum');
+
+// const Users = require('./Data-sources/User');
+// const Communities = require('./Data-sources/Community');
+// const Foruns = require('./Data-sources/Forum');
+
+const { Users, Communities, Foruns, Coment } = require('./Data-sources');
+
 
 const { getUserId } = require('./Helpers/functions');
-const jsonwebtoken = require('jsonwebtoken');
 
 const schemaPath = './schemas/index.graphql';
 
@@ -34,6 +37,10 @@ const schemaPath = './schemas/index.graphql';
         resolvers,
         playground: true,
         tracing: true,
+        cors: {
+            origin: '*',
+            credentials: true,
+        },
         context: ({ req }) => {
             return {
                 userId:
@@ -44,6 +51,7 @@ const schemaPath = './schemas/index.graphql';
             users: new Users(db.User),
             communities: new Communities(db.Community),
             foruns: new Foruns(db.Forum),
+            coments: new Coment(db.Coment),
         }),
         plugins: [
             // Install a landing page plugin based on NODE_ENV

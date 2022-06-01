@@ -1,59 +1,32 @@
-const UploadModel = require('../Db/models/upload');
+const User = require('../Db/models/user');
 const fs = require('fs');
 
-const uploads = (req, res) => {
-    const files = req.files;
-    console.log(files);
+const uploads = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const img = fs.readFileSync(req.file.path);
+        const encode_img = img.toString('base64');
 
-    if (!files) {
-        res.status(400).send('Please choose file');
-    }
+        if (!img) {
+            res.status(400).send('Please choose file');
+        }
 
-    let imgArray = files.map(file => {
-        let img = fs.readFileSync(file.path);
-
-        return (encode_image = img.toString('base64'));
-    });
-
-    let result = imgArray.map((src, index) => {
-        let finalImg = {
-            filename: files[index].originalname,
-            contentType: files[index].mimetype,
-            imageBase64: src,
+        const finalImg = {
+            filename: req.file.originalname,
+            contentType: req.file.mimetype,
+            imageBase64: Buffer.from(encode_img, 'base64'),
         };
 
-        let newUpload = new UploadModel(finalImg);
+        const user = await User.findOneAndUpdate(
+            { _id: userId },
+            { $push: { profilePicture: finalImg } },
+        );
 
-        return newUpload
-            .save()
-            .then(() => {
-                return {
-                    msg: `${files[index].originalname} Uploaded Successfully...!`,
-                };
-            })
-            .catch(error => {
-                if (error) {
-                    if (error.name === 'MongoError' && error.code === 11000) {
-                        return Promise.reject({
-                            error: `Duplicate ${files[index].originalname}. File Already exists! `,
-                        });
-                    }
-                    return Promise.reject({
-                        error:
-                            error.message ||
-                            `Cannot Upload ${files[index].originalname} Something Missing!`,
-                    });
-                }
-            });
-    });
-
-    Promise.all(result)
-        .then(msg => {
-            res.json(msg);
-        })
-        .catch(err => {
-            res.json(err);
-        });
+        res.status(201).send(`Uploaded Successfully...!`);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error });
+    }
 };
 
 module.exports = {

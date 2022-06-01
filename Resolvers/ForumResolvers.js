@@ -38,12 +38,17 @@ const forumResolvers = {
                     category: input.category,
                     description: input.description,
                     community: input.community,
-                    owner: userId,
+                    owner: userId,                    
                 });
 
                 await Community.findOneAndUpdate(
                     { _id: input.community },
-                    { $push: { foruns: newForum._id } },
+                    { $push: { foruns: newForum._id } },                    
+                );
+                
+                await Forum.findOneAndUpdate(
+                    { _id: newForum._id },
+                    { $push: { members: userId } },                    
                 );
 
                 await Forum.findOneAndUpdate(

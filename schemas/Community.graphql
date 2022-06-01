@@ -7,6 +7,7 @@ type Community {
     creation_date: Date
     members: [User!]!
     foruns: [Forum]!
+    owner: ID!
 }
 
 input CommunityInput {
