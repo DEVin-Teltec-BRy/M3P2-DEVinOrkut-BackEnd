@@ -8,4 +8,6 @@
 #import User from 'User.graphql'
 #import UserInput from 'User.graphql'
 #import AuthInput from 'User.graphql'
+#import Coments from 'Coments.graphql'
+#import ComentInput from 'Coments.graphql'
 
