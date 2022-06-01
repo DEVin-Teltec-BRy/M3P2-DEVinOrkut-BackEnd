@@ -25,6 +25,7 @@ type User {
     cool: [String]
     sexy: [String]
     fans: [ID!]
+    imageUrl: [String]
     profilePicture: [String]
     album: [ID]
     friends: [User]!

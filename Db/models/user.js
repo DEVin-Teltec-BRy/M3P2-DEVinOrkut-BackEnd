@@ -41,6 +41,7 @@ const UserSchema = new Schema({
             ref: 'User',
         },
     ],
+    imageUrl: [String],
     profilePicture: [
         {
             filename: {
