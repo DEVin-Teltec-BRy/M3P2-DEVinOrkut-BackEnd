@@ -1,6 +1,4 @@
-const { Forum, Community } = require('../Db');
 const { DateScalar } = require('./Scalar');
-var validator = require('validator');
 
 const forumResolvers = {
     Date: DateScalar,
@@ -11,7 +9,7 @@ const forumResolvers = {
         createForum: async (
             _,
             { input },
-            { dataSources: { foruns }, userId },
+            { dataSources: { foruns, communities }, userId },
         ) => {
             try {
                 if (!userId) {
@@ -20,7 +18,9 @@ const forumResolvers = {
                     );
                 }
 
-                const findCommunity = await Community.findById(input.community);
+                const findCommunity = await communities.getCommunityById(
+                    input.community,
+                );
                 if (!findCommunity)
                     throw new Error('Comunidade não encontrada.');
 
@@ -38,22 +38,13 @@ const forumResolvers = {
                     category: input.category,
                     description: input.description,
                     community: input.community,
-                    owner: userId,                    
+                    owner: userId,
+                    members: userId,
                 });
 
-                await Community.findOneAndUpdate(
+                await communities.updateCommunity(
                     { _id: input.community },
-                    { $push: { foruns: newForum._id } },                    
-                );
-                
-                await Forum.findOneAndUpdate(
-                    { _id: newForum._id },
-                    { $push: { members: userId } },                    
-                );
-
-                await Forum.findOneAndUpdate(
-                    { _id: newForum._id },
-                    { $push: { members: userId } },
+                    { $push: { foruns: newForum._id } },
                 );
 
                 return newForum;
