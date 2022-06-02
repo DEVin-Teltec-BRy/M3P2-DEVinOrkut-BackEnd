@@ -30,7 +30,7 @@ const schemaPath = './schemas/index.graphql';
     const app = express();
     app.use(cors());
     app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
+    app.use(express.urlencoded({ extended: true, limit: '6mb' }));
 
     const server = new ApolloServer({
         typeDefs: importSchema(schemaPath),
