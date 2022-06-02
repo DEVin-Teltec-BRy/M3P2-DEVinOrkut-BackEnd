@@ -163,6 +163,7 @@ const userResolvers = {
                         argumentName: 'email',
                     });
                 }
+                
                 const gmail = user.email;
                 const existingUser = await users.findByEmail(gmail);
                 console.log(existingUser);
@@ -197,7 +198,15 @@ const userResolvers = {
                     user.token,
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                 );
-                
+                const isValidPassword = await passwordValidator(user.newPassword);
+                if (!isValidPassword) {
+                    throw new UserInputError(
+                        'Password must contain at least 8 characters, one uppercase, one number and one special case character',
+                        {
+                            argumentName: 'newPassword',
+                        },
+                    );
+                }
                 const email = validatingToken.email;
                 const hashedPass = await bcrypt.hash(user.newPassword, 10);
                 const updatePassword = await Users.updateOne(
