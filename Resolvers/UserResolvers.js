@@ -221,7 +221,7 @@ const userResolvers = {
                return error
             }
         },
-        createTestimonial:async (_, { input}, { dataSources: { users } })=>{
+        createTestimonial:async (_, { input })=>{
             try {
                 const user = await Users.findById(input.userId)
                 const from = await Users.findById(input.from)
@@ -233,15 +233,16 @@ const userResolvers = {
                     name:from.fullName,
                     testimonial:input.testimonial
                 })
-                console.log(newTestimonial)
+            
                 const insertTestimonial = await Users.updateOne(
                     {_id:user._id},
                     {$push:{testimonial:newTestimonial._id}}
                 )
-                console.log(insertTestimonial)
-                return "cool"
+                if(insertTestimonial.modifiedCount!==1) return "Erro ao criar depoimento"
+                
+                return "Depoimento criado com sucesso"
             } catch (error) {
-                console.error(error)
+                return error
             }
         }
     },
