@@ -59,14 +59,16 @@ const communityResolvers = {
                     );
                 }
 
-                const community = await Community.findById(community_id);
+                const community = await communities.getCommunityById(
+                    community_id,
+                );
                 const hasMember = community.members.includes(userId);
 
                 if (hasMember) {
                     throw new Error('Você já faz parte da comunidade.');
                 }
 
-                const newMember = await Community.findOneAndUpdate(
+                const newMember = await communities.updateCommunity(
                     { _id: community_id },
                     { $push: { members: userId } },
                 );
@@ -88,11 +90,13 @@ const communityResolvers = {
                     );
                 }
 
-                const community = await communities.getCommunityByIt(community_id);
+                const community = await communities.getCommunityByIt(
+                    community_id,
+                );
                 const isOwner = community.owner == userId;
 
-                if(!isOwner) {
-                    return community
+                if (!isOwner) {
+                    return community;
                 }
 
                 const inputDatas = {
@@ -100,12 +104,14 @@ const communityResolvers = {
                     name: input.name,
                     description: input.description,
                     category: input.category,
-                 };
+                };
 
-                const updateCommunity = await communities.updateCommunity(community_id, inputDatas)
+                const updateCommunity = await communities.updateCommunity(
+                    community_id,
+                    inputDatas,
+                );
 
-                return updateCommunity
-
+                return updateCommunity;
             } catch (error) {
                 throw new Error(`${error.message}`);
             }
