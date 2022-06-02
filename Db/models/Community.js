@@ -16,6 +16,7 @@ const CommunitySchema = mongoose.Schema({
         unique: true,
         required: true,
     },
+    imageUrl: [String],
     category: {
         type: String,
         enum: [
