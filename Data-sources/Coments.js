@@ -10,6 +10,9 @@ class Coment extends MongoDataSource {
     getComent(comentId) {
         return this.findOneById(comentId);
     }
+    findManyByIds(ids) {
+        return this.findManyByIds(ids);
+    }
 }
 
 module.exports = Coment;
