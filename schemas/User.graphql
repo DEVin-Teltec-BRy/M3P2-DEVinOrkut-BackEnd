@@ -27,7 +27,6 @@ type User {
     fans: [ID!]
     imageUrl: [String]
     profilePicture: [String]
-    album: [ID]
     friends: [User]!
     friendRequest: [User]!
     communities: [ID]

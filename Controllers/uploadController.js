@@ -21,10 +21,10 @@ const uploads = async (req, res) => {
             imageBase64: Buffer.from(encode_img, 'base64'),
         };
 
-        const user = await User.findOneAndUpdate(
-            { _id: userId },
-            { $push: { profilePicture: finalImg } },
-        );
+        // const user = await User.findOneAndUpdate(
+        //     { _id: userId },
+        //     { $push: { profilePicture: finalImg } },
+        // );
 
         res.status(201).send(`Uploaded Successfully...!`);
     } catch (error) {
@@ -47,6 +47,27 @@ const uploadImageUser = async (req, res) => {
         const user = await User.findOneAndUpdate(
             { _id: userId },
             { $push: { imageUrl: url } },
+        );
+
+        res.status(201).send(`Uploaded Successfully...!`);
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+};
+
+const uploadImageProfile = async (req, res) => {
+    const { image } = req.body;
+    const userId = req.user.userId;
+
+    try {
+        const uploadedResponse = await cloudinary.uploader.upload(image, {
+            upload_preset: 'devinorkut',
+        });
+        const url = uploadedResponse.url;
+
+        const user = await User.findOneAndUpdate(
+            { _id: userId },
+            { $push: { profilePicture: url } },
         );
 
         res.status(201).send(`Uploaded Successfully...!`);
@@ -80,5 +101,6 @@ const uploadImageCommunity = async (req, res) => {
 module.exports = {
     uploads,
     uploadImageUser,
+    uploadImageProfile,
     uploadImageCommunity,
 };
