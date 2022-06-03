@@ -14,4 +14,5 @@ type Mutation {
     editCommunity(input: CommunityInput, community_id: ID!): Community
     createComent(input: ComentInput): Coments
     deleteComent(forumId: ID!, comentId: ID!): Coments
+    createTestimonial(input:Testimonial):String
 }

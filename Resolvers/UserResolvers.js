@@ -8,6 +8,7 @@ const cpfValidator = require('../Helpers/validatorCpf');
 const { typesOfUser } = require('./typesUser');
 const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
+const Testimonial = require('../Db/models/testimonial')
 const friendshipResolvers = require('./friendshipResolvers');
 
 const secretKey = environment.jwtAccessTokenSecret;
@@ -220,6 +221,30 @@ const userResolvers = {
                return error
             }
         },
+        createTestimonial:async (_, { input })=>{
+            try {
+                const user = await Users.findById(input.userId)
+                const from = await Users.findById(input.from)
+                if(!user) return "Destinatário  inexistente"
+                if(!from) return "Usuário inexistente"
+                const newTestimonial = await Testimonial.create({
+                    userId:input.userId,
+                    from:input.from,
+                    name:from.fullName,
+                    testimonial:input.testimonial
+                })
+            
+                const insertTestimonial = await Users.updateOne(
+                    {_id:user._id},
+                    {$push:{testimonial:newTestimonial._id}}
+                )
+                if(insertTestimonial.modifiedCount!==1) return "Erro ao criar depoimento"
+                
+                return "Depoimento criado com sucesso"
+            } catch (error) {
+                return error
+            }
+        }
     },
     User: typesOfUser,
 };

@@ -42,40 +42,7 @@ const UserSchema = new Schema({
         },
     ],
     imageUrl: [String],
-    profilePicture: [
-        {
-            filename: {
-                type: String,
-                unique: true,
-                required: true,
-            },
-            contentType: {
-                type: String,
-                required: true,
-            },
-            imageBase64: {
-                type: String,
-                required: true,
-            },
-        },
-    ],
-    album: [
-        {
-            filename: {
-                type: String,
-                unique: true,
-                required: true,
-            },
-            contentType: {
-                type: String,
-                required: true,
-            },
-            imageBase64: {
-                type: String,
-                required: true,
-            },
-        },
-    ],
+    profilePicture: [String],
     friends: [
         {
             type: Schema.Types.ObjectId,

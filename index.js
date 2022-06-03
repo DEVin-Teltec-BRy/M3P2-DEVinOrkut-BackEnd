@@ -73,7 +73,7 @@ const schemaPath = './schemas/index.graphql';
     });
 
     app.use(express.static(path.join(__dirname, 'public')));
-    app.use('/', require('./Router/uploadRoute'));
+    app.use('/api', require('./Router/uploadRoute'));
 
     await new Promise(resolve => app.listen({ port: port }, resolve));
     console.log(

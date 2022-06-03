@@ -1,6 +1,6 @@
 type Community {
     id: ID!
-    logo: String!
+    logo: String
     name: String!
     description: String!
     category: Category!
@@ -14,7 +14,7 @@ input CommunityInput {
   logo: String
   name: String
   description: String
-  category: String
+  category: Category
 }
 
 enum Category {

@@ -1,6 +1,6 @@
 const { UserInputError } = require("apollo-server");
 const sendEmail = require("../../Helpers/email-send");
-const { ifFriendOrRequestThrowErro } = require("../../Helpers/functions");
+const { checkRequest } = require("../../Helpers/functions");
 
 const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { users }, userId }) => { 
   const loggedUser = await users.getUser(userId)
@@ -10,16 +10,16 @@ const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { us
   if(senderId !== userId) {
     throw new UserInputError('O usuário que enviou a solicitação de amizade não é o mesmo que está logado');
   }
-  ifFriendOrRequestThrowErro(loggedUser.friends, requestedId);
-  ifFriendOrRequestThrowErro(loggedUser.friendRequest, requestedId);
+  checkRequest(loggedUser.friends, requestedId);
+  checkRequest(loggedUser.friendRequest, requestedId);
   const userRequested = await users.getUser(requestedId);
   if (!userRequested) {
     throw new UserInputError('Você esta enviando uma solicitação para um usuário que não existe.', {
       argumentName: 'requestedId',
     });
   }
-  ifFriendOrRequestThrowErro(userRequested.friendRequest, senderId);
-  ifFriendOrRequestThrowErro(userRequested.friends, senderId);  
+  checkRequest(userRequested.friendRequest, senderId);
+  checkRequest(userRequested.friends, senderId);  
   userRequested.friendRequest.push(loggedUser._id);
   loggedUser.friendRequest.push(userRequested._id);
 
