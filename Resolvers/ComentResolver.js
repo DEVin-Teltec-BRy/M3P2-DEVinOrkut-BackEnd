@@ -37,6 +37,48 @@ const comentResolvers = {
                 throw new Error(error);
             }
         },
+        deleteComent: async (
+            _,
+            { forumId, comentId },
+            { dataSources: { coments, foruns, communities }, userId },
+        ) => {
+            try {
+                if (!userId) {
+                    throw new Error(
+                        'Você precisa estar logado para criar um fórum.',
+                    );
+                }
+                
+                /// remover a referencia do comentário da coleção forum
+                const foundForum = await foruns.findOneById(forumId);
+
+                if(!foundForum)
+                    throw new Error('Forum não encontrado.');
+                
+                const comentIndex = foundForum.coments.findIndex(
+                    requestedId => requestedId.toString() === comentId.toString(),
+                );
+                
+                if(comentIndex == null)
+                    throw new Error('Referência de Comentário não encontrado.');
+               
+                const comentDeleted = foundForum.coments[comentIndex];
+                foundForum.coments.splice(comentIndex,1);
+
+                await foundForum.save();
+                
+                /// deletar o comentário da coleção comentários
+               
+                const excluedComent = await coments.delete({                    
+                    _id: comentId                   
+                });                                           
+                return comentDeleted;
+                
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+
     },
 };
 
