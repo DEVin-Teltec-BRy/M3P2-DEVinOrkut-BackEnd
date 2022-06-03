@@ -21,11 +21,11 @@ const communityResolvers = {
             { dataSources: { communities }, userId },
         ) => {
             try {
-                // if (!userId) {
-                //     throw new Error(
-                //         'Você precisa estar logado para criar uma comunidade.',
-                //     );
-                // }
+                if (!userId) {
+                    throw new Error(
+                        'Você precisa estar logado para criar uma comunidade.',
+                    );
+                }
 
                 const isEmptyString = await validator.isEmpty(input.name, {
                     ignore_whitespace: false,
@@ -41,6 +41,7 @@ const communityResolvers = {
                     description: input.description,
                     category: input.category,
                     owner: userId,
+                    members: userId,
                 });
                 return newCommunity;
             } catch (err) {
