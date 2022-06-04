@@ -247,7 +247,7 @@ const userResolvers = {
                     });
                     return {
                         token,
-                        user: users.getUser(users),
+                        user: users.getUser(userId),
                     };
                 }
             }
