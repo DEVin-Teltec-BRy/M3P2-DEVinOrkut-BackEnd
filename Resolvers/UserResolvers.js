@@ -10,7 +10,6 @@ const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
 const Testimonial = require('../Db/models/testimonial');
 const friendshipResolvers = require('./friendshipResolvers');
-const Environment = require('../Config/Environment');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -24,28 +23,6 @@ const userResolvers = {
             }
             if (obj.name) {
                 return 'Community';
-            }
-            return null;
-        },
-    },
-    TokenResult: {
-        __resolveType(obj) {
-            if (obj.token) {
-                return 'AuthPayload';
-            }
-            if (obj.message) {
-                return 'Error';
-            }
-            return null;
-        },
-    },
-    LoginTokenResult: {
-        __resolveType(obj) {
-            if (obj.fullName) {
-                return 'User';
-            }
-            if (obj.message) {
-                return 'Error';
             }
             return null;
         },
@@ -245,26 +222,34 @@ const userResolvers = {
                 return error;
             }
         },
-        refreshToken: async (_, { token }, { userId }) => {
+        validatedToken: async (
+            _,
+            { token },
+            { dataSources: { users }, userId },
+        ) => {
             try {
+                if (!userId) {
+                    throw new UserInputError('Usuario não logado');
+                }   
                 jwt.verify(token, secretKey);
+
+                return { 
+                    token, user: users.getUser(userId),
+                }
             } catch (error) {
+                if (error.message === 'jwt malformed') {
+                    throw new UserInputError('Formato de token não valido');
+                }
+
                 if (error.message === 'jwt expired') {
                     const token = jwt.sign({ userId }, secretKey, {
                         expiresIn: '1d',
                     });
                     return {
                         token,
+                        user: users.getUser(users),
                     };
                 }
-                const message =
-                    error.message === 'jwt malformed'
-                        ? 'Token não valido'
-                        : error.message;
-
-                return {
-                    message,
-                };
             }
         },
         createTestimonial: async (_, { input }) => {
@@ -290,24 +275,6 @@ const userResolvers = {
                 return 'Depoimento criado com sucesso';
             } catch (error) {
                 return error;
-            }
-        },
-        loginToken: async (_, { token }, { dataSources: { users } }) => {
-            try {
-                const payload = jwt.verify(token, secretKey);
-                const { userId } = payload;
-                return users.getUser(userId);
-            } catch (error) {
-                const message =
-                    error.message === 'jwt expired'
-                        ? 'Token expirado'
-                        : error.message === 'jwt malformed'
-                        ? 'Token informado não valido'
-                        : error.message;
-
-                return {
-                    message,
-                };
             }
         },
     },
