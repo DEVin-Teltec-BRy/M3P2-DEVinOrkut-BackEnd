@@ -8,7 +8,7 @@ const cpfValidator = require('../Helpers/validatorCpf');
 const { typesOfUser } = require('./typesUser');
 const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
-const Testimonial = require('../Db/models/testimonial')
+const Testimonial = require('../Db/models/testimonial');
 const friendshipResolvers = require('./friendshipResolvers');
 const Environment = require('../Config/Environment');
 
@@ -32,6 +32,17 @@ const userResolvers = {
         __resolveType(obj) {
             if (obj.token) {
                 return 'AuthPayload';
+            }
+            if (obj.message) {
+                return 'Error';
+            }
+            return null;
+        },
+    },
+    LoginTokenResult: {
+        __resolveType(obj) {
+            if (obj.fullName) {
+                return 'User';
             }
             if (obj.message) {
                 return 'Error';
@@ -176,7 +187,7 @@ const userResolvers = {
                         argumentName: 'email',
                     });
                 }
-                
+
                 const gmail = user.email;
                 const existingUser = await users.findByEmail(gmail);
                 console.log(existingUser);
@@ -186,12 +197,12 @@ const userResolvers = {
                     { email: gmail },
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                     { expiresIn: '15m' },
-                );  
+                );
                 const userObject = {
                     fullName: 'Usuário DEVinOrkut',
                     email: user.email,
                 };
-                console.log(Token); 
+                console.log(Token);
                 //enviar token no link
                 const variables = {
                     redirectLink: `http://localhost:3000/resetpass/${Token}`,
@@ -203,7 +214,7 @@ const userResolvers = {
                 return 'Email enviado';
             }
         },
-        changePassword: async (_, {user}, { dataSources: { users } }) => {
+        changePassword: async (_, { user }, { dataSources: { users } }) => {
             try {
                 if (user.newPassword !== user.confirmPassword)
                     return 'A confirmação de senha precisa ser igual a nova senha.';
@@ -211,7 +222,9 @@ const userResolvers = {
                     user.token,
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                 );
-                const isValidPassword = await passwordValidator(user.newPassword);
+                const isValidPassword = await passwordValidator(
+                    user.newPassword,
+                );
                 if (!isValidPassword) {
                     throw new UserInputError(
                         'Password must contain at least 8 characters, one uppercase, one number and one special case character',
@@ -228,9 +241,8 @@ const userResolvers = {
                 );
                 return `Nova senha cadastrada com sucesso.`;
             } catch (error) {
-               
-               if(Object.hasOwn(error,"expiredAt")) return "Token Expirado"
-               return error
+                if (Object.hasOwn(error, 'expiredAt')) return 'Token Expirado';
+                return error;
             }
         },
         refreshToken: async (_, { token }, { userId }) => {
@@ -239,7 +251,7 @@ const userResolvers = {
             } catch (error) {
                 if (error.message === 'jwt expired') {
                     const token = jwt.sign({ userId }, secretKey, {
-                        expiresIn: "1d",
+                        expiresIn: '1d',
                     });
                     return {
                         token,
@@ -255,30 +267,49 @@ const userResolvers = {
                 };
             }
         },
-        createTestimonial:async (_, { input })=>{
+        createTestimonial: async (_, { input }) => {
             try {
-                const user = await Users.findById(input.userId)
-                const from = await Users.findById(input.from)
-                if(!user) return "Destinatário  inexistente"
-                if(!from) return "Usuário inexistente"
+                const user = await Users.findById(input.userId);
+                const from = await Users.findById(input.from);
+                if (!user) return 'Destinatário  inexistente';
+                if (!from) return 'Usuário inexistente';
                 const newTestimonial = await Testimonial.create({
-                    userId:input.userId,
-                    from:input.from,
-                    name:from.fullName,
-                    testimonial:input.testimonial
-                })
-            
+                    userId: input.userId,
+                    from: input.from,
+                    name: from.fullName,
+                    testimonial: input.testimonial,
+                });
+
                 const insertTestimonial = await Users.updateOne(
-                    {_id:user._id},
-                    {$push:{testimonial:newTestimonial._id}}
-                )
-                if(insertTestimonial.modifiedCount!==1) return "Erro ao criar depoimento"
-                
-                return "Depoimento criado com sucesso"
+                    { _id: user._id },
+                    { $push: { testimonial: newTestimonial._id } },
+                );
+                if (insertTestimonial.modifiedCount !== 1)
+                    return 'Erro ao criar depoimento';
+
+                return 'Depoimento criado com sucesso';
             } catch (error) {
-                return error
+                return error;
             }
-        }
+        },
+        loginToken: async (_, { token }, { dataSources: { users } }) => {
+            try {
+                const payload = jwt.verify(token, secretKey);
+                const { userId } = payload;
+                return users.getUser(userId);
+            } catch (error) {
+                const message =
+                    error.message === 'jwt expired'
+                        ? 'Token expirado'
+                        : error.message === 'jwt malformed'
+                        ? 'Token informado não valido'
+                        : error.message;
+
+                return {
+                    message,
+                };
+            }
+        },
     },
     User: typesOfUser,
 };

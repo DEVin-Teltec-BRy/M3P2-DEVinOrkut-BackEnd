@@ -1,5 +1,7 @@
 # aqui serão declaradas as mutations
 union TokenResult = AuthPayload | Error
+union LoginTokenResult = User | Error
+
 type Mutation {
     createCommunity(input: CommunityInput): Community
     createUser(user: UserInput!): AuthPayload!
@@ -17,5 +19,6 @@ type Mutation {
     createComent(input: ComentInput): Coments
     deleteComent(forumId: ID!, comentId: ID!): Coments
     createTestimonial(input:Testimonial):String
+    loginToken(token:String!): LoginTokenResult!
 }
 
