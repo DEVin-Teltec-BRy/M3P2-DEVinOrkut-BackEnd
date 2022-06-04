@@ -128,7 +128,6 @@ const communityResolvers = {
             const newLimit =
                 !Number(limit) || Number(limit) > 20 ? 20 : Number(limit);
             const newOffset = !Number(offset) ? 0 : Number(offset);
-            console.log(newOffset, newLimit);
             try {
                 // A modificação da variavel userId(inserindo ID de algum membro da comunidade)
                 // deve ser feita para efeito de testes, pois a feature de login
@@ -153,6 +152,9 @@ const communityResolvers = {
             } catch (error) {
                 return error.message;
             }
+        },
+        owner: async ({ owner }, _, { dataSources }) => {
+            return dataSources.users.getUser(owner);
         },
     },
 };
