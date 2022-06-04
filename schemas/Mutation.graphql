@@ -1,6 +1,5 @@
 # aqui serão declaradas as mutations
-union TokenResult = AuthPayload | Error
-union LoginTokenResult = User | Error
+
 
 type Mutation {
     createCommunity(input: CommunityInput): Community
@@ -14,11 +13,10 @@ type Mutation {
     acceptRequest(loggedUserId: ID!, acceptFriendshipId: ID!): [User]!
     joinCommunity(community_id: ID): Community
     createForum(input: ForumInput): Forum
-    refreshToken(token: String!): TokenResult
+    validatedToken(token: String!): AuthPayload!
     editCommunity(input: CommunityInput, community_id: ID!): Community
     createComent(input: ComentInput): Coments
     deleteComent(forumId: ID!, comentId: ID!): Coments
     createTestimonial(input:Testimonial):String
-    loginToken(token:String!): LoginTokenResult!
 }
 

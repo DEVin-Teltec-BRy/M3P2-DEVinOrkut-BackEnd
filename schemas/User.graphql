@@ -73,8 +73,3 @@ type AuthPayload {
     token: String
     user: User
 }
-
-type Error {
-    message: String!
-}
-
