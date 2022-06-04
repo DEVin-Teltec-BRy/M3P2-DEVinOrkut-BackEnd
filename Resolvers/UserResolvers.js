@@ -9,6 +9,7 @@ const { typesOfUser } = require('./typesUser');
 const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
 const friendshipResolvers = require('./friendshipResolvers');
+const Environment = require('../Config/Environment');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -22,6 +23,17 @@ const userResolvers = {
             }
             if (obj.name) {
                 return 'Community';
+            }
+            return null;
+        },
+    },
+    TokenResult: {
+        __resolveType(obj) {
+            if (obj.token) {
+                return 'AuthPayload';
+            }
+            if (obj.message) {
+                return 'Error';
             }
             return null;
         },
@@ -127,7 +139,9 @@ const userResolvers = {
                     );
                 }
 
-                const token = jwt.sign({ userId: user._id }, secretKey);
+                const token = jwt.sign({ userId: user._id }, secretKey, {
+                    expiresIn: 500,
+                });
 
                 return {
                     token,
@@ -185,7 +199,7 @@ const userResolvers = {
                 return 'Email enviado';
             }
         },
-        changePassword: async (_, { user }, { dataSources: { users } }) => {
+        changePassword: async (_, {}, { dataSources: { users } }) => {
             try {
                 if (user.newPassword !== user.confirmPassword)
                     return 'A confirmação de senha precisa ser igual a nova senha.';
@@ -203,6 +217,28 @@ const userResolvers = {
                 return `Nova senha cadastrada com sucesso.`;
             } catch (error) {
                 return error;
+            }
+        },
+        refreshToken: async (_, { token }, { userId }) => {
+            try {
+                jwt.verify(token, secretKey);
+            } catch (error) {
+                if (error.message === 'jwt expired') {
+                    const token = jwt.sign({ userId }, secretKey, {
+                        expiresIn: 500,
+                    });
+                    return {
+                        token,
+                    };
+                }
+                const message =
+                    error.message === 'jwt malformed'
+                        ? 'Token não valido'
+                        : error.message;
+
+                return {
+                    message,
+                };
             }
         },
     },
