@@ -32,7 +32,6 @@ const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { us
     linkLogo: "http://localhost:3000/assets/imgs/logo.png",
   }
   sendEmail(sendEmailTo, variables, 'invite-friend');
-  await loggedUser.save();
   await userRequested.save();
   return loggedUser;
 }
