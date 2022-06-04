@@ -41,14 +41,8 @@ const UserSchema = new Schema({
             ref: 'User',
         },
     ],
-    profilePicture: [Buffer],
-    album: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Album',
-            required: false,
-        },
-    ],
+    imageUrl: [String],
+    profilePicture: [String],
     friends: [
         {
             type: Schema.Types.ObjectId,

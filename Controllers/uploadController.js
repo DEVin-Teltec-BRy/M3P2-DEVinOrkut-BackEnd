@@ -1,63 +1,106 @@
-const UploadModel = require('../Db/models/upload');
+const User = require('../Db/models/user');
+const Community = require('../Db/models/Community');
 const fs = require('fs');
+const cloudinary = require('../Helpers/cloudinary');
 
-const uploads = (req, res) => {
-    const user = req.user;
-    console.log(user);
+// controller do endpoint para salvar imagens diretamente no mongoDB em base64
+const uploads = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const img = fs.readFileSync(req.file.path);
 
-    const files = req.files;
+        const encode_img = img.toString('base64');
 
-    if (!files) {
-        res.status(400).send('Please choose file');
-    }
+        if (!img) {
+            res.status(400).send('Please choose file');
+        }
 
-    let imgArray = files.map(file => {
-        let img = fs.readFileSync(file.path);
-
-        return (encode_image = img.toString('base64'));
-    });
-
-    let result = imgArray.map((src, index) => {
-        let finalImg = {
-            filename: files[index].originalname,
-            contentType: files[index].mimetype,
-            imageBase64: src,
+        const finalImg = {
+            filename: req.file.originalname,
+            contentType: req.file.mimetype,
+            imageBase64: Buffer.from(encode_img, 'base64'),
         };
 
-        let newUpload = new UploadModel(finalImg);
+        // const user = await User.findOneAndUpdate(
+        //     { _id: userId },
+        //     { $push: { profilePicture: finalImg } },
+        // );
 
-        return newUpload
-            .save()
-            .then(() => {
-                return {
-                    msg: `${files[index].originalname} Uploaded Successfully...!`,
-                };
-            })
-            .catch(error => {
-                if (error) {
-                    if (error.name === 'MongoError' && error.code === 11000) {
-                        return Promise.reject({
-                            error: `Duplicate ${files[index].originalname}. File Already exists! `,
-                        });
-                    }
-                    return Promise.reject({
-                        error:
-                            error.message ||
-                            `Cannot Upload ${files[index].originalname} Something Missing!`,
-                    });
-                }
-            });
-    });
+        res.status(201).send(`Uploaded Successfully...!`);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error });
+    }
+};
 
-    Promise.all(result)
-        .then(msg => {
-            res.json(msg);
-        })
-        .catch(err => {
-            res.json(err);
+// controller de endpoint para salvar imagens de users na cloud do Cloudinary
+const uploadImageUser = async (req, res) => {
+    const { image } = req.body;
+    const userId = req.user.userId;
+
+    try {
+        const uploadedResponse = await cloudinary.uploader.upload(image, {
+            upload_preset: 'devinorkut',
         });
+        const url = uploadedResponse.url;
+
+        const user = await User.findOneAndUpdate(
+            { _id: userId },
+            { $push: { imageUrl: url } },
+        );
+
+        res.status(201).send(`Uploaded Successfully...!`);
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+};
+
+const uploadImageProfile = async (req, res) => {
+    const { image } = req.body;
+    const userId = req.user.userId;
+
+    try {
+        const uploadedResponse = await cloudinary.uploader.upload(image, {
+            upload_preset: 'devinorkut',
+        });
+        const url = uploadedResponse.url;
+
+        const user = await User.findOneAndUpdate(
+            { _id: userId },
+            { $push: { profilePicture: url } },
+        );
+
+        res.status(201).send(`Uploaded Successfully...!`);
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+};
+
+// controller de endpoint para salvar imagens das comunidades na cloud do Cloudinary
+const uploadImageCommunity = async (req, res) => {
+    const { image } = req.body;
+    const { communityId } = req.params;
+
+    try {
+        const uploadedResponse = await cloudinary.uploader.upload(image, {
+            upload_preset: 'devinorkut',
+        });
+        const url = uploadedResponse.url;
+
+        const community = await Community.findOneAndUpdate(
+            { _id: communityId },
+            { $push: { imageUrl: url } },
+        );
+
+        res.status(201).send(`Uploaded Successfully...!`);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 module.exports = {
     uploads,
+    uploadImageUser,
+    uploadImageProfile,
+    uploadImageCommunity,
 };

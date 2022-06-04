@@ -10,9 +10,12 @@ type Mutation {
     refuseFriendship(loggedUserId: ID!, declineFriendshipId: ID!): User
     removeFriendship(loggedUserId: ID!, removeFriendshipId: ID!): [User]
     acceptRequest(loggedUserId: ID!, acceptFriendshipId: ID!): [User]!
-    joinCommunity(community_id: ID): Community 
+    joinCommunity(community_id: ID): Community
     createForum(input: ForumInput): Forum
     refreshToken(token: String!): TokenResult
-
+    editCommunity(input: CommunityInput, community_id: ID!): Community
+    createComent(input: ComentInput): Coments
+    deleteComent(forumId: ID!, comentId: ID!): Coments
+    createTestimonial(input:Testimonial):String
 }
 

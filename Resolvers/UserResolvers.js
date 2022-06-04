@@ -1,4 +1,4 @@
-const brcypt = require('bcryptjs/dist/bcrypt');
+const bcrypt = require('bcryptjs/dist/bcrypt');
 const jwt = require('jsonwebtoken');
 const environment = require('../Config/Environment');
 const validator = require('validator');
@@ -8,6 +8,7 @@ const cpfValidator = require('../Helpers/validatorCpf');
 const { typesOfUser } = require('./typesUser');
 const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
+const Testimonial = require('../Db/models/testimonial')
 const friendshipResolvers = require('./friendshipResolvers');
 const Environment = require('../Config/Environment');
 
@@ -45,7 +46,7 @@ const userResolvers = {
                     throw new AuthenticationError('you must be logged in');
                 return users.getUser(id);
             } catch (error) {
-                console.log(error);
+                throw new Error(error);
             }
         },
         users: async (_, __, { dataSources: { users }, userId }) => {
@@ -54,7 +55,7 @@ const userResolvers = {
                     throw new AuthenticationError('you must be logged in');
                 return users.getAll();
             } catch (error) {
-                console.log(error);
+                throw new Error(error);
             }
         },
         searchParam: async (
@@ -104,10 +105,12 @@ const userResolvers = {
                     });
                 }
 
-                const password = await brcypt.hash(user.password, 10);
+                const password = await bcrypt.hash(user.password, 10);
                 const userCreated = await users.create({ ...user, password });
-                //adicionar expires.
-                const token = jwt.sign({ userId: userCreated._id }, secretKey);
+
+                const token = jwt.sign({ userId: userCreated._id }, secretKey, {
+                    expiresIn: '1d',
+                });
 
                 return {
                     token,
@@ -129,7 +132,7 @@ const userResolvers = {
                         argumentName: 'email',
                     });
                 }
-                const isValid = await brcypt.compare(password, user.password);
+                const isValid = await bcrypt.compare(password, user.password);
                 if (!isValid) {
                     throw new UserInputError(
                         'Email ou senha invalido, tente novamente',
@@ -140,7 +143,7 @@ const userResolvers = {
                 }
 
                 const token = jwt.sign({ userId: user._id }, secretKey, {
-                    expiresIn: 500,
+                    expiresIn: '1d',
                 });
 
                 return {
@@ -173,6 +176,7 @@ const userResolvers = {
                         argumentName: 'email',
                     });
                 }
+                
                 const gmail = user.email;
                 const existingUser = await users.findByEmail(gmail);
                 console.log(existingUser);
@@ -182,15 +186,15 @@ const userResolvers = {
                     { email: gmail },
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                     { expiresIn: '15m' },
-                );
+                );  
                 const userObject = {
                     fullName: 'Usuário DEVinOrkut',
                     email: user.email,
                 };
-                console.log(Token);
+                console.log(Token); 
                 //enviar token no link
                 const variables = {
-                    link: `localhost:3000/resetpassword/${Token}`,
+                    redirectLink: `http://localhost:3000/resetpass/${Token}`,
                 };
                 sendEmail(userObject, variables, '../emails/reset-password');
 
@@ -207,7 +211,15 @@ const userResolvers = {
                     user.token,
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                 );
-                console.log(validatingToken);
+                const isValidPassword = await passwordValidator(user.newPassword);
+                if (!isValidPassword) {
+                    throw new UserInputError(
+                        'Password must contain at least 8 characters, one uppercase, one number and one special case character',
+                        {
+                            argumentName: 'newPassword',
+                        },
+                    );
+                }
                 const email = validatingToken.email;
                 const hashedPass = await bcrypt.hash(user.newPassword, 10);
                 const updatePassword = await Users.updateOne(
@@ -216,7 +228,9 @@ const userResolvers = {
                 );
                 return `Nova senha cadastrada com sucesso.`;
             } catch (error) {
-                return error;
+               
+               if(Object.hasOwn(error,"expiredAt")) return "Token Expirado"
+               return error
             }
         },
         refreshToken: async (_, { token }, { userId }) => {
@@ -225,7 +239,7 @@ const userResolvers = {
             } catch (error) {
                 if (error.message === 'jwt expired') {
                     const token = jwt.sign({ userId }, secretKey, {
-                        expiresIn: 500,
+                        expiresIn: "1d",
                     });
                     return {
                         token,
@@ -241,6 +255,30 @@ const userResolvers = {
                 };
             }
         },
+        createTestimonial:async (_, { input })=>{
+            try {
+                const user = await Users.findById(input.userId)
+                const from = await Users.findById(input.from)
+                if(!user) return "Destinatário  inexistente"
+                if(!from) return "Usuário inexistente"
+                const newTestimonial = await Testimonial.create({
+                    userId:input.userId,
+                    from:input.from,
+                    name:from.fullName,
+                    testimonial:input.testimonial
+                })
+            
+                const insertTestimonial = await Users.updateOne(
+                    {_id:user._id},
+                    {$push:{testimonial:newTestimonial._id}}
+                )
+                if(insertTestimonial.modifiedCount!==1) return "Erro ao criar depoimento"
+                
+                return "Depoimento criado com sucesso"
+            } catch (error) {
+                return error
+            }
+        }
     },
     User: typesOfUser,
 };

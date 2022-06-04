@@ -1,13 +1,13 @@
 type Forum {
-    id: ID!
-    name: String!
-    logo: String!
-    category: Category!
-    creation_date: Date
-    owner: User!
-    description: String!
-    members: [User!]!
-    comments: [String]!
+  id: ID!
+  name: String!
+  logo: String!
+  category: Category!
+  creation_date: Date
+  owner: User!
+  description: String!
+  members(limit: Int, offset: Int): [User!]!
+  comments(limit: Int, offset: Int): [Coments]!
 }
 
 input ForumInput {

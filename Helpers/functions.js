@@ -46,9 +46,10 @@ const ifFriendOrRequestThrowError = (arrObjIds, userId) => {
         );
     }
 };
+
 module.exports = {
     getTokenPayload,
     getUserId,
     passwordValidator,
-    ifFriendOrRequestThrowError,
+    checkRequest: ifFriendOrRequestThrowError,
 };

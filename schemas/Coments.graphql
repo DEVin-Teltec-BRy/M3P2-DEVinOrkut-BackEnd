@@ -1,0 +1,15 @@
+
+type Coments {
+    id: ID!,
+    forum: Forum!,
+    description: String!,
+    creation_date: Date,
+    author: User!
+}
+
+input ComentInput {
+    description: String!
+    forum: ID!
+}
+
+scalar Date

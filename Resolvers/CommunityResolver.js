@@ -18,14 +18,14 @@ const communityResolvers = {
         createCommunity: async (
             _,
             { input },
-            { dataSources: { communities, userId } },
+            { dataSources: { communities }, userId },
         ) => {
             try {
-                // if (!userId) {
-                //     throw new Error(
-                //         'Você precisa estar logado para criar uma comunidade.',
-                //     );
-                // }
+                if (!userId) {
+                    throw new Error(
+                        'Você precisa estar logado para criar uma comunidade.',
+                    );
+                }
 
                 const isEmptyString = await validator.isEmpty(input.name, {
                     ignore_whitespace: false,
@@ -40,6 +40,8 @@ const communityResolvers = {
                     logo: input.logo,
                     description: input.description,
                     category: input.category,
+                    owner: userId,
+                    members: userId,
                 });
                 return newCommunity;
             } catch (err) {
@@ -58,19 +60,59 @@ const communityResolvers = {
                     );
                 }
 
-                const community = await Community.findById(community_id);
+                const community = await communities.getCommunityById(
+                    community_id,
+                );
                 const hasMember = community.members.includes(userId);
 
                 if (hasMember) {
                     throw new Error('Você já faz parte da comunidade.');
                 }
 
-                const newMember = await Community.findOneAndUpdate(
+                const newMember = await communities.updateCommunity(
                     { _id: community_id },
                     { $push: { members: userId } },
                 );
 
                 return newMember;
+            } catch (error) {
+                throw new Error(`${error.message}`);
+            }
+        },
+        editCommunity: async (
+            _,
+            { community_id, input },
+            { dataSources: { communities }, userId },
+        ) => {
+            try {
+                if (!userId) {
+                    throw new Error(
+                        'Você precisa estar logado para visualizar a comunidade.',
+                    );
+                }
+
+                const community = await communities.getCommunityByIt(
+                    community_id,
+                );
+                const isOwner = community.owner == userId;
+
+                if (!isOwner) {
+                    return community;
+                }
+
+                const inputDatas = {
+                    logo: input.logo,
+                    name: input.name,
+                    description: input.description,
+                    category: input.category,
+                };
+
+                const updateCommunity = await communities.updateCommunity(
+                    community_id,
+                    inputDatas,
+                );
+
+                return updateCommunity;
             } catch (error) {
                 throw new Error(`${error.message}`);
             }

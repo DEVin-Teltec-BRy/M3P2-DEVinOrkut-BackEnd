@@ -16,6 +16,7 @@ const CommunitySchema = mongoose.Schema({
         unique: true,
         required: true,
     },
+    imageUrl: [String],
     category: {
         type: String,
         enum: [
@@ -50,6 +51,11 @@ const CommunitySchema = mongoose.Schema({
             required: false,
         },
     ],
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
 });
 
 module.exports = mongoose.model('Community', CommunitySchema);

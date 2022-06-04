@@ -1,19 +1,20 @@
 type Community {
     id: ID!
-    logo: String!
+    logo: String
     name: String!
     description: String!
     category: Category!
     creation_date: Date
     members: [User!]!
     foruns: [Forum]!
+    owner: ID!
 }
 
 input CommunityInput {
   logo: String
   name: String
   description: String
-  category: String
+  category: Category
 }
 
 enum Category {

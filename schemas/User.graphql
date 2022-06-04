@@ -25,8 +25,8 @@ type User {
     cool: [String]
     sexy: [String]
     fans: [ID!]
+    imageUrl: [String]
     profilePicture: [String]
-    album: [ID]
     friends: [User]!
     friendRequest: [User]!
     communities: [ID]
@@ -43,7 +43,11 @@ input NewPassword {
     newPassword:String!
     confirmPassword:String!
 }
-
+input Testimonial{
+    testimonial:String!
+    userId:String!
+    from:String!
+}
 input UserInput {
     fullName: String!
     email: String!
@@ -73,3 +77,4 @@ type AuthPayload {
 type Error {
     message: String!
 }
+
