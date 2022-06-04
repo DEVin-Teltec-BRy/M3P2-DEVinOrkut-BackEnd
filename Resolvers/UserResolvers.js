@@ -8,7 +8,7 @@ const cpfValidator = require('../Helpers/validatorCpf');
 const { typesOfUser } = require('./typesUser');
 const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
-const Testimonial = require('../Db/models/testimonial')
+const Testimonial = require('../Db/models/testimonial');
 const friendshipResolvers = require('./friendshipResolvers');
 
 const secretKey = environment.jwtAccessTokenSecret;
@@ -164,7 +164,7 @@ const userResolvers = {
                         argumentName: 'email',
                     });
                 }
-                
+
                 const gmail = user.email;
                 const existingUser = await users.findByEmail(gmail);
                 console.log(existingUser);
@@ -174,12 +174,12 @@ const userResolvers = {
                     { email: gmail },
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                     { expiresIn: '15m' },
-                );  
+                );
                 const userObject = {
                     fullName: 'Usuário DEVinOrkut',
                     email: user.email,
                 };
-                console.log(Token); 
+                console.log(Token);
                 //enviar token no link
                 const variables = {
                     redirectLink: `http://localhost:3000/resetpass/${Token}`,
@@ -199,7 +199,9 @@ const userResolvers = {
                     user.token,
                     process.env.JWT_ACCESS_TOKEN_SECRET,
                 );
-                const isValidPassword = await passwordValidator(user.newPassword);
+                const isValidPassword = await passwordValidator(
+                    user.newPassword,
+                );
                 if (!isValidPassword) {
                     throw new UserInputError(
                         'Password must contain at least 8 characters, one uppercase, one number and one special case character',
@@ -216,35 +218,65 @@ const userResolvers = {
                 );
                 return `Nova senha cadastrada com sucesso.`;
             } catch (error) {
-               
-               if(Object.hasOwn(error,"expiredAt")) return "Token Expirado"
-               return error
+                if (Object.hasOwn(error, 'expiredAt')) return 'Token Expirado';
+                return error;
             }
         },
-        createTestimonial:async (_, { input })=>{
+        validatedToken: async (
+            _,
+            { token },
+            { dataSources: { users }, userId },
+        ) => {
             try {
-                const user = await Users.findById(input.userId)
-                const from = await Users.findById(input.from)
-                if(!user) return "Destinatário  inexistente"
-                if(!from) return "Usuário inexistente"
-                const newTestimonial = await Testimonial.create({
-                    userId:input.userId,
-                    from:input.from,
-                    name:from.fullName,
-                    testimonial:input.testimonial
-                })
-            
-                const insertTestimonial = await Users.updateOne(
-                    {_id:user._id},
-                    {$push:{testimonial:newTestimonial._id}}
-                )
-                if(insertTestimonial.modifiedCount!==1) return "Erro ao criar depoimento"
-                
-                return "Depoimento criado com sucesso"
+                if (!userId) {
+                    throw new UserInputError('Usuario não logado');
+                }   
+                jwt.verify(token, secretKey);
+
+                return { 
+                    token, user: users.getUser(userId),
+                }
             } catch (error) {
-                return error
+                if (error.message === 'jwt malformed') {
+                    throw new UserInputError('Formato de token não valido');
+                }
+
+                if (error.message === 'jwt expired') {
+                    const token = jwt.sign({ userId }, secretKey, {
+                        expiresIn: '1d',
+                    });
+                    return {
+                        token,
+                        user: users.getUser(userId),
+                    };
+                }
             }
-        }
+        },
+        createTestimonial: async (_, { input }) => {
+            try {
+                const user = await Users.findById(input.userId);
+                const from = await Users.findById(input.from);
+                if (!user) return 'Destinatário  inexistente';
+                if (!from) return 'Usuário inexistente';
+                const newTestimonial = await Testimonial.create({
+                    userId: input.userId,
+                    from: input.from,
+                    name: from.fullName,
+                    testimonial: input.testimonial,
+                });
+
+                const insertTestimonial = await Users.updateOne(
+                    { _id: user._id },
+                    { $push: { testimonial: newTestimonial._id } },
+                );
+                if (insertTestimonial.modifiedCount !== 1)
+                    return 'Erro ao criar depoimento';
+
+                return 'Depoimento criado com sucesso';
+            } catch (error) {
+                return error;
+            }
+        },
     },
     User: typesOfUser,
 };
