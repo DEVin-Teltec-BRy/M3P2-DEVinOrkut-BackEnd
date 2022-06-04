@@ -29,7 +29,7 @@ type User {
     profilePicture: [String]
     friends: [User]!
     friendRequest: [User]!
-    communities: [ID]
+    communities: [Community]
     createAt: Date
     updated: Date
 
