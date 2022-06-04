@@ -203,7 +203,7 @@ const userResolvers = {
                 return 'Email enviado';
             }
         },
-        changePassword: async (_, {}, { dataSources: { users } }) => {
+        changePassword: async (_, {user}, { dataSources: { users } }) => {
             try {
                 if (user.newPassword !== user.confirmPassword)
                     return 'A confirmação de senha precisa ser igual a nova senha.';
