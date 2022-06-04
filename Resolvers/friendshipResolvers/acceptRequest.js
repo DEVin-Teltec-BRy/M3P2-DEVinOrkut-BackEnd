@@ -34,6 +34,7 @@ const acceptRequest = async (
     loggedUser.friends.push(acceptFriendshipId);
     loggedUser.friendRequest.splice(index, 1);
     await loggedUser.save();
+    await userAcceptFriend.save();
     return loggedUser.friendRequest;
 };
 

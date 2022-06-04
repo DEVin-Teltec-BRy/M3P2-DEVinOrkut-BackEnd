@@ -11,7 +11,6 @@ const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { us
     throw new UserInputError('O usuário que enviou a solicitação de amizade não é o mesmo que está logado');
   }
   checkRequest(loggedUser.friends, requestedId);
-  checkRequest(loggedUser.friendRequest, requestedId);
   const userRequested = await users.getUser(requestedId);
   if (!userRequested) {
     throw new UserInputError('Você esta enviando uma solicitação para um usuário que não existe.', {
@@ -21,7 +20,6 @@ const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { us
   checkRequest(userRequested.friendRequest, senderId);
   checkRequest(userRequested.friends, senderId);  
   userRequested.friendRequest.push(loggedUser._id);
-  loggedUser.friendRequest.push(userRequested._id);
 
   const sendEmailTo = {
     name: userRequested.fullName,
@@ -34,7 +32,6 @@ const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { us
     linkLogo: "http://localhost:3000/assets/imgs/logo.png",
   }
   sendEmail(sendEmailTo, variables, 'invite-friend');
-  await loggedUser.save();
   await userRequested.save();
   return loggedUser;
 }
