@@ -28,7 +28,6 @@ const uploads = async (req, res) => {
 
         res.status(201).send(`Uploaded Successfully...!`);
     } catch (error) {
-        console.log(error);
         res.status(500).json({ error: error });
     }
 };
