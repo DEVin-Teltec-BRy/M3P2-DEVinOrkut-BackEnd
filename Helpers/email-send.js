@@ -9,7 +9,7 @@ const transport = nodemailer.createTransport(configEmail)
 
 const email = new Email({
   message: {
-    from: 'no-reply@orkut.com',
+    from: 'daniel_m_nascimento@aluno.sc.senai.br',
   },
   send: true,
   transport

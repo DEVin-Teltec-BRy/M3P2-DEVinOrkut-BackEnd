@@ -53,7 +53,7 @@ const userResolvers = {
         ) => {
             try {
                 if (!userId)
-                    throw new AuthenticationError('you must be logged in');
+                    throw new AuthenticationError('Você deve estar logado');
 
                 const listUser = await users.searchUserByName(param);
                 const listCommunities = await communities.searchCommunityByName(
@@ -62,7 +62,7 @@ const userResolvers = {
 
                 return [...listUser, ...listCommunities];
             } catch (error) {
-                console.log(error);
+                throw new AuthenticationError('Error: '+error.message);
             }
         },
     },
@@ -71,7 +71,7 @@ const userResolvers = {
             try {
                 const isEmailValid = await validator.isEmail(user.email);
                 if (!isEmailValid) {
-                    throw new UserInputError('Invalid argument value', {
+                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
                         argumentName: 'email',
                     });
                 }
@@ -79,7 +79,7 @@ const userResolvers = {
                 const isValidPassword = await passwordValidator(user.password);
                 if (!isValidPassword) {
                     throw new UserInputError(
-                        'Password must contain at least 8 characters, one uppercase, one number and one special case character',
+                        'A senha deve conter pelo menos 8 caracteres, uma maiúscula, um número e um caractere especial.',
                         {
                             argumentName: 'password',
                         },
@@ -88,7 +88,7 @@ const userResolvers = {
 
                 const isCpfValid = cpf.isValid(user.cpf);
                 if (!isCpfValid) {
-                    throw new UserInputError('Invalid argument value', {
+                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
                         argumentName: 'cpf',
                     });
                 }
@@ -104,7 +104,10 @@ const userResolvers = {
                     token,
                 };
             } catch (error) {
-                console.log(error);
+                throw new UserInputError(`Erro: ${error.message}`, {
+                        argumentName: 'password',
+                    },
+                );
             }
         },
         login: async (
@@ -160,14 +163,13 @@ const userResolvers = {
             try {
                 const isEmailValid = await validator.isEmail(user.email);
                 if (!isEmailValid) {
-                    throw new UserInputError('Invalid argument value', {
+                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
                         argumentName: 'email',
                     });
                 }
 
                 const gmail = user.email;
                 const existingUser = await users.findByEmail(gmail);
-                console.log(existingUser);
                 if (existingUser.length === 0)
                     return `Email enviado para ${user.email}`;
                 const Token = jwt.sign(
@@ -179,8 +181,6 @@ const userResolvers = {
                     fullName: 'Usuário DEVinOrkut',
                     email: user.email,
                 };
-                console.log(Token);
-                //enviar token no link
                 const variables = {
                     redirectLink: `http://localhost:3000/resetpass/${Token}`,
                 };
@@ -204,7 +204,7 @@ const userResolvers = {
                 );
                 if (!isValidPassword) {
                     throw new UserInputError(
-                        'Password must contain at least 8 characters, one uppercase, one number and one special case character',
+                        'A senha deve conter pelo menos 8 caracteres, uma maiúscula, um número e um caractere especial.',
                         {
                             argumentName: 'newPassword',
                         },
