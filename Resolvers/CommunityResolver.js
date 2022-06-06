@@ -45,8 +45,8 @@ const communityResolvers = {
                     owner: userId,
                     members: userId,
                 });
-                users.communities.push(newCommunity._id);
-                await users.save();
+                user.communities.push(newCommunity._id);
+                await user.save();
                 return newCommunity;
             } catch (err) {
                 throw new Error(`Algo deu errado: ${err.message}`);
