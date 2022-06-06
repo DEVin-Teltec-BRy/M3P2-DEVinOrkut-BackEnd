@@ -28,7 +28,7 @@ const removeFriendship = async (
     friend.friends.splice(loggedIndex, 1);
     await friend.save();
     await loggedUser.save();
-    return loggedUser.friends;
+    return loggedUser;
 };
 
 module.exports = removeFriendship;

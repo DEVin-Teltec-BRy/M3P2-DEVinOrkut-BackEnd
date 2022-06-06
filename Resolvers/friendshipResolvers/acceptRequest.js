@@ -35,7 +35,7 @@ const acceptRequest = async (
     loggedUser.friendRequest.splice(index, 1);
     await loggedUser.save();
     await userAcceptFriend.save();
-    return loggedUser.friendRequest;
+    return loggedUser;
 };
 
 module.exports = acceptRequest;
