@@ -10,6 +10,7 @@ const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
 const Testimonial = require('../Db/models/testimonial');
 const friendshipResolvers = require('./friendshipResolvers');
+const { host_front, host_back } = require('../Config/Environment');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -182,7 +183,8 @@ const userResolvers = {
                     email: user.email,
                 };
                 const variables = {
-                    redirectLink: `http://localhost:3000/resetpass/${Token}`,
+                    linkLogo: `${host_back}/assets/imgs/logo.png`,
+                    redirectLink: `${host_front}/resetpass/${Token}`,
                 };
                 sendEmail(userObject, variables, '../emails/reset-password');
 

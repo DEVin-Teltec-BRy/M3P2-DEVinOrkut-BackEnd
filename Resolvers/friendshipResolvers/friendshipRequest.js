@@ -1,6 +1,7 @@
 const { UserInputError } = require("apollo-server");
 const sendEmail = require("../../Helpers/email-send");
 const { checkRequest } = require("../../Helpers/functions");
+const { host_front, host_back } = require("../../Config/Environment");
 
 const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { users }, userId }) => { 
   const loggedUser = await users.getUser(userId)
@@ -28,8 +29,8 @@ const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { us
 
   const variables = {
     senderName: loggedUser.fullName,
-    redirectLink: "http://localhost:3000/assets/imgs/logo.png",
-    linkLogo: "http://localhost:3000/assets/imgs/logo.png",
+    redirectLink: `${host_front}/solicitacoes`,
+    linkLogo: `${host_back}/assets/imgs/logo.png`,
   }
   sendEmail(sendEmailTo, variables, 'invite-friend');
   await userRequested.save();
