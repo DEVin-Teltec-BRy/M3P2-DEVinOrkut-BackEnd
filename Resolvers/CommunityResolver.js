@@ -11,14 +11,16 @@ const communityResolvers = {
             _,
             { id },
             { dataSources: { communities }, userId },
-        ) => communities.findOneById(id),
+        ) => {
+            return communities.getCommunityById(id);
+        },
     },
 
     Mutation: {
         createCommunity: async (
             _,
             { input },
-            { dataSources: { communities }, userId },
+            { dataSources: { communities, users }, userId },
         ) => {
             try {
                 if (!userId) {
@@ -34,7 +36,7 @@ const communityResolvers = {
                 if (isEmptyString) {
                     throw new Error('Nome não pode ser vazio.');
                 }
-
+                const user = await users.getUser(userId);
                 const newCommunity = await communities.create({
                     name: input.name.trim(),
                     logo: input.logo,
@@ -43,6 +45,8 @@ const communityResolvers = {
                     owner: userId,
                     members: userId,
                 });
+                users.communities.push(newCommunity._id);
+                await users.save();
                 return newCommunity;
             } catch (err) {
                 throw new Error(`Algo deu errado: ${err.message}`);
@@ -91,7 +95,7 @@ const communityResolvers = {
                     );
                 }
 
-                const community = await communities.getCommunityByIt(
+                const community = await communities.getCommunityById(
                     community_id,
                 );
                 const isOwner = community.owner == userId;
