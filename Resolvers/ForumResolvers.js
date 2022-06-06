@@ -13,14 +13,14 @@ const forumResolvers = {
             } catch (error) {
                 throw new Error(error);
             }
-        }
+        },
     },
 
     Mutation: {
         createForum: async (
             _,
             { input },
-            { dataSources: { foruns, communities }, userId },
+            { dataSources: { foruns, communities, users }, userId },
         ) => {
             try {
                 if (!userId) {
@@ -43,14 +43,16 @@ const forumResolvers = {
                         'Para criar um fórum você deve ser membro da comunidade.',
                     );
 
+                const user = await users.getUser(userId);
+
                 const newForum = await foruns.create({
                     name: input.name.trim(),
                     logo: input.logo,
                     category: input.category,
                     description: input.description,
                     community: input.community,
-                    owner: userId,
-                    members: userId,
+                    owner: user,
+                    members: [user],
                 });
 
                 await communities.updateCommunity(
@@ -71,7 +73,8 @@ const forumResolvers = {
             { dataSources: { coments, users }, userId },
             info,
         ) => {
-            const newLimit = !Number(limit) || Number(limit) > 50 ? 50 : Number(limit);
+            const newLimit =
+                !Number(limit) || Number(limit) > 50 ? 50 : Number(limit);
             const newOffset = !Number(offset) ? 0 : Number(offset);
             try {
                 if (!userId) {
@@ -79,10 +82,20 @@ const forumResolvers = {
                         'Você precisa estar logado para visualizar a comunidade.',
                     );
                 }
-                const forumComments = await coments.findManyByIds(forumArg.coments);
-                const authors = await users.findManyByIds(forumComments.map(comment => comment.author));
+                const forumComments = await coments.findManyByIds(
+                    forumArg.coments,
+                );
+                const authors = await users.findManyByIds(
+                    forumComments.map(comment => comment.author),
+                );
                 const data = await forumComments.map(comment => {
-                    return { ...comment["_doc"], author: authors.find(author => author.id == comment.author), id: comment["_id"] }
+                    return {
+                        ...comment['_doc'],
+                        author: authors.find(
+                            author => author.id == comment.author,
+                        ),
+                        id: comment['_id'],
+                    };
                 });
                 return await data
                     .slice(newOffset, newOffset + newLimit)
@@ -90,8 +103,8 @@ const forumResolvers = {
             } catch (error) {
                 throw new Error(error);
             }
-        }
-    }
+        },
+    },
 };
 
 module.exports = forumResolvers;
