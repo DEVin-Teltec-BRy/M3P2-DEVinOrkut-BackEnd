@@ -8,6 +8,8 @@ module.exports = {
     cloudinary_name: process.env.CLOUDINARY_NAME,
     cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
     cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
+    host_front: process.env.HOST_BACK,
+    host_back: process.env.HOST_FRONT,
     configEmail: {
         host: process.env.SMTP_HOST,
         port: process.env.SMTP_PORT,
