@@ -133,10 +133,6 @@ const communityResolvers = {
                 !Number(limit) || Number(limit) > 20 ? 20 : Number(limit);
             const newOffset = !Number(offset) ? 0 : Number(offset);
             try {
-                // A modificação da variavel userId(inserindo ID de algum membro da comunidade)
-                // deve ser feita para efeito de testes, pois a feature de login
-                // não foi implementada no projeto. Excluir esse comentário e alteração quando a feature de login for implementada.
-                // userId = '628feb45cad8e4e007601c6x';
                 if (!userId) {
                     return [];
                 }
@@ -160,6 +156,16 @@ const communityResolvers = {
         owner: async ({ owner }, _, { dataSources }) => {
             return dataSources.users.getUser(owner);
         },
+        foruns: async ({ foruns }, _, { dataSources, userId }) => {
+            try {
+                if (!userId) {
+                    return [];
+                }
+                return await dataSources.foruns.findManyByIds(foruns);
+            } catch (error) {
+                return [error.message];
+            }
+        }
     },
 };
 
