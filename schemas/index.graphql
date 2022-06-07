@@ -10,4 +10,5 @@
 #import AuthInput from 'User.graphql'
 #import Coments from 'Coments.graphql'
 #import ComentInput from 'Coments.graphql'
+#import Testimonial from 'Testimonial.graphql'
 
