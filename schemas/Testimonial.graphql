@@ -1,0 +1,8 @@
+scalar Date
+type Testimonial {
+    userId:ID
+    from:ID
+    name: String,
+    testimonial: String,
+    date:Date,
+}
