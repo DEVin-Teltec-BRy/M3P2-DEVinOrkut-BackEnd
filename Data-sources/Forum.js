@@ -7,6 +7,9 @@ class Forum extends MongoDataSource {
     findOneById(id) {
         return this.model.findById(id);
     }
+    findManyByIds(ids) {
+        return this.findManyByIds(ids);
+    }
 }
 
 module.exports = Forum;
