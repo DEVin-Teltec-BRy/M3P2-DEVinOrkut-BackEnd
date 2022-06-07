@@ -67,12 +67,17 @@ const userResolvers = {
             }
         },
         readTestimonials:async ( _,
-            { user }
+            { user },{ userId}
             )=>{
             try {
-                const data = await Users.findById(user.userId);
+                if (!userId)
+                throw new AuthenticationError('Você deve estar logado');
+                console.log(user)
+                const data = await Users.findById(user);
+                console.log(data)
                 if (!data) return 'Usuário inexistente';
-                const testimonials =  data.testimonials
+                const testimonials =  data.testimonial
+                console.log(testimonials)
                 if (!testimonials) return 'Usuário não possui depoimentos';
                 const testimonialsResult = await Promise.all(testimonials.map((item)=>{
                     return Testimonial.findById(item)
