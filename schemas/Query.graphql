@@ -3,6 +3,7 @@ union SearchResult = User | Community
 type Query {
   user(id: ID!): User
   users: [User]
+  categories: [Category]
   communities: [Community]
   community(id: ID!): Community
   searchParam(param: String): [SearchResult!]
