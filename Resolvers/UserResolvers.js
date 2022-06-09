@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const environment = require('../Config/Environment');
 const validator = require('validator');
 const { UserInputError, AuthenticationError } = require('apollo-server');
-const { passwordValidator } = require('../Helpers/functions');
+const { passwordValidator, getAge } = require('../Helpers/functions');
 const cpfValidator = require('../Helpers/validatorCpf');
 const { typesOfUser } = require('./typesUser');
 const sendEmail = require('../Helpers/email-send');
@@ -63,39 +63,49 @@ const userResolvers = {
 
                 return [...listUser, ...listCommunities];
             } catch (error) {
-                throw new AuthenticationError('Error: '+error.message);
+                throw new AuthenticationError('Error: ' + error.message);
             }
         },
-        readTestimonials:async ( _,
-            { user },{ userId}
-            )=>{
+        readTestimonials: async (_, { user }, { userId }) => {
             try {
                 if (!userId)
-                throw new AuthenticationError('Você deve estar logado');
-                console.log(user)
+                    throw new AuthenticationError('Você deve estar logado');
+                console.log(user);
                 const data = await Users.findById(user);
-                console.log(data)
+                console.log(data);
                 if (!data) return 'Usuário inexistente';
-                const testimonials =  data.testimonial
-                console.log(testimonials)
+                const testimonials = data.testimonial;
+                console.log(testimonials);
                 if (!testimonials) return 'Usuário não possui depoimentos';
-                const testimonialsResult = await Promise.all(testimonials.map((item)=>{
-                    return Testimonial.findById(item)
-                }));
+                const testimonialsResult = await Promise.all(
+                    testimonials.map(item => {
+                        return Testimonial.findById(item);
+                    }),
+                );
                 return testimonialsResult;
             } catch (error) {
                 return error;
             }
-        }
+        },
     },
     Mutation: {
         createUser: async (_, { user }, { dataSources: { users } }) => {
             try {
+                const age = getAge(user.birthDate);
+                if (age < 18) {
+                    throw new UserInputError(
+                        'Você precisa ter 18 anos ou mais para se cadastrar',
+                    );
+                }
+
                 const isEmailValid = await validator.isEmail(user.email);
                 if (!isEmailValid) {
-                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
-                        argumentName: 'email',
-                    });
+                    throw new UserInputError(
+                        'Erro: Não foi possivel efetuar este processo, valores passados são invalidos.',
+                        {
+                            argumentName: 'email',
+                        },
+                    );
                 }
 
                 const isValidPassword = await passwordValidator(user.password);
@@ -110,7 +120,28 @@ const userResolvers = {
 
                 const isCpfValid = cpf.isValid(user.cpf);
                 if (!isCpfValid) {
-                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
+                    throw new UserInputError(
+                        'Erro: Não foi possivel efetuar este processo, valores passados são invalidos.',
+                        {
+                            argumentName: 'cpf',
+                        },
+                    );
+                }
+
+                const isUserEmailExist = await Users.findOne({
+                    email: user.email,
+                });
+
+                if (isUserEmailExist) {
+                    throw new UserInputError('Erro: Email já cadastrado.', {
+                        argumentName: 'email',
+                    });
+                }
+
+                const isUserCpfExist = await Users.findOne({ cpf: user.cpf });
+
+                if (isUserCpfExist) {
+                    throw new UserInputError('Erro: CPF já cadastrado.', {
                         argumentName: 'cpf',
                     });
                 }
@@ -127,9 +158,8 @@ const userResolvers = {
                 };
             } catch (error) {
                 throw new UserInputError(`Erro: ${error.message}`, {
-                        argumentName: 'password',
-                    },
-                );
+                    argumentName: 'password',
+                });
             }
         },
         login: async (
@@ -185,9 +215,12 @@ const userResolvers = {
             try {
                 const isEmailValid = await validator.isEmail(user.email);
                 if (!isEmailValid) {
-                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
-                        argumentName: 'email',
-                    });
+                    throw new UserInputError(
+                        'Erro: Não foi possivel efetuar este processo, valores passados são invalidos.',
+                        {
+                            argumentName: 'email',
+                        },
+                    );
                 }
 
                 const gmail = user.email;
@@ -253,12 +286,13 @@ const userResolvers = {
             try {
                 if (!userId) {
                     throw new UserInputError('Usuario não logado');
-                }   
+                }
                 jwt.verify(token, secretKey);
 
-                return { 
-                    token, user: users.getUser(userId),
-                }
+                return {
+                    token,
+                    user: users.getUser(userId),
+                };
             } catch (error) {
                 if (error.message === 'jwt malformed') {
                     throw new UserInputError('Formato de token não valido');
@@ -300,8 +334,7 @@ const userResolvers = {
                 return error;
             }
         },
-      
-        },
+    },
     User: typesOfUser,
 };
 

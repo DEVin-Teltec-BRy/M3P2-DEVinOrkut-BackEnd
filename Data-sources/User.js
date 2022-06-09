@@ -13,8 +13,11 @@ class Users extends MongoDataSource {
     findByEmail(email) {
         return this.findByFields({ email });
     }
-    searchUserByName(name){
-        return this.model.find({fullName: {$regex:name, $options: "i"}});
+    findByCpf(cpf) {
+        return this.model.findByFields({ cpf });
+    }
+    searchUserByName(name) {
+        return this.model.find({ fullName: { $regex: name, $options: 'i' } });
     }
 }
 
