@@ -140,7 +140,7 @@ const userResolvers = {
                 const isCpfValid = cpf.isValid(user.cpf);
                 if (!isCpfValid) {
                     throw new UserInputError(
-                        'Erro: Não foi possivel efetuar este processo, valores passados são invalidos.',
+                        'Não foi possivel efetuar este processo, valores passados são invalidos.',
                         {
                             argumentName: 'cpf',
                         },
@@ -152,7 +152,7 @@ const userResolvers = {
                 });
 
                 if (isUserEmailExist) {
-                    throw new UserInputError('Erro: Email já cadastrado.', {
+                    throw new UserInputError('Email já cadastrado.', {
                         argumentName: 'email',
                     });
                 }
@@ -160,7 +160,7 @@ const userResolvers = {
                 const isUserCpfExist = await Users.findOne({ cpf: user.cpf });
 
                 if (isUserCpfExist) {
-                    throw new UserInputError('Erro: CPF já cadastrado.', {
+                    throw new UserInputError('CPF já cadastrado.', {
                         argumentName: 'cpf',
                     });
                 }
@@ -176,7 +176,7 @@ const userResolvers = {
                     token,
                 };
             } catch (error) {
-                throw new UserInputError(`Erro: ${error.message}`, {
+                throw new UserInputError(`${error.message}`, {
                     argumentName: 'password',
                 });
             }

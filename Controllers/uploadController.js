@@ -48,7 +48,7 @@ const uploadImageUser = async (req, res) => {
             { $push: { imageUrl: url } },
         );
 
-        res.status(201).send(`Uploaded Successfully...!`);
+        res.status(201).send({ profilePicture: url });
     } catch (error) {
         res.status(500).json({ error: error });
     }
@@ -66,10 +66,10 @@ const uploadImageProfile = async (req, res) => {
 
         const user = await User.findOneAndUpdate(
             { _id: userId },
-            { $push: { profilePicture: url } },
+            { $push: { uploaded: url } },
         );
 
-        res.status(201).send(`Uploaded Successfully...!`);
+        res.status(201).send({ uploaded: url });
     } catch (error) {
         res.status(500).json({ error: error });
     }
