@@ -58,6 +58,7 @@ class Users extends MongoDataSource {
             }
          
         };
+    }
     findByCpf(cpf) {
         return this.model.findByFields({ cpf });
     }
