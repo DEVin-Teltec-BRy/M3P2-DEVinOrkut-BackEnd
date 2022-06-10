@@ -104,6 +104,21 @@ const forumResolvers = {
                 throw new Error(error);
             }
         },
+        owner: async (
+            forumArg,
+            { limit, offset },
+            { dataSources: { users }, userId },
+            info,
+        ) => {
+            try {
+                if (!userId) {
+                    throw new Error('Você precisa estar logado para visualizar o fórum.');
+                }
+                return await users.findOneById(forumArg.owner);
+            } catch (error) {
+                return error.message;
+            }
+        }
     },
 };
 
