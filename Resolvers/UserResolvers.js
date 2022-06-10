@@ -353,6 +353,29 @@ const userResolvers = {
                 return error;
             }
         },
+        updateUser: async (_, { input }) => {
+            console.log("Update user!")
+            console.log("Input: ", input)
+            try {
+                const {id, ...dados} = input
+                const user = await Users.findById(id);
+                if (!user) return 'Usuário  inexistente';
+
+                const newUserData = await Users.updateOne(
+                    { _id: user.id },
+                    { ...dados },
+                );
+
+                console.log(`newUserData`, newUserData)
+
+                if (newUserData.modifiedCount === 0)
+                    return 'Nenhum dado atualizado';
+
+                return 'Dados atualizados com sucesso';
+            } catch (error) {
+                return error;
+            }
+        },
     },
     User: typesOfUser,
 };
