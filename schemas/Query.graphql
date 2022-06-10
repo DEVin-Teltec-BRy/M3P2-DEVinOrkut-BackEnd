@@ -8,5 +8,6 @@ type Query {
   community(id: ID!): Community
   searchParam(param: String): [SearchResult!]
   forum(id: ID!): Forum
+  getFriends(pagination: PaginationInput): FriendResults
   readTestimonials(user: ID!): [Testimonial]
 }

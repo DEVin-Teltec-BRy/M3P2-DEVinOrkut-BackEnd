@@ -6,10 +6,13 @@
 #import Forum from 'Forum.graphql'
 #import ForumInput from 'Forum.graphql'
 #import Friends from 'Friends.graphql'
+#import FriendResults from 'Friends.graphql'
 #import User from 'User.graphql'
 #import UserInput from 'User.graphql'
 #import AuthInput from 'User.graphql'
 #import Coments from 'Coments.graphql'
 #import ComentInput from 'Coments.graphql'
+#import Pagination from 'Pagination.graphql'
+#import PaginationInput from 'Pagination.graphql'
 #import Testimonial from 'Testimonial.graphql'
 

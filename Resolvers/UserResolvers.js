@@ -87,6 +87,25 @@ const userResolvers = {
                 return error;
             }
         },
+        getFriends: async (
+            _,
+            { pagination },
+            { dataSources: { users }, userId },
+        ) => {
+            const { page, per_page } = pagination;
+            if (!userId)
+                throw new AuthenticationError('Você deve estar logado');
+            if (Number(page) <= 0) {
+                throw new UserInputError('Erro: Pagina não valida.');
+            }
+            if (Number(per_page) <= 0) {
+                throw new UserInputError(
+                    'Erro: Precisa informar um numero de items > 0',
+                );
+            }
+
+            return await users.getFriends(userId, page, per_page);
+        },
     },
     Mutation: {
         createUser: async (_, { user }, { dataSources: { users } }) => {

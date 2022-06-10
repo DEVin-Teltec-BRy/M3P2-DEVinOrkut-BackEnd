@@ -1,0 +1,11 @@
+type Pagination {
+    currentPage: Int
+    nextPage: Int
+    prevPage: Int
+    count:Int
+    totalPages:Int
+}
+input PaginationInput {
+    page: Int
+    per_page: Int
+}
