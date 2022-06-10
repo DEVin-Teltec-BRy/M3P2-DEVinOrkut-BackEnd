@@ -46,10 +46,13 @@ const ifFriendOrRequestThrowError = (arrObjIds, userId) => {
         );
     }
 };
-
+const generatePagination = (array, page_size, page_number) => {
+    return array.slice((page_number - 1) * page_size, page_number * page_size);
+};
 module.exports = {
     getTokenPayload,
     getUserId,
     passwordValidator,
     checkRequest: ifFriendOrRequestThrowError,
+    generatePagination,
 };

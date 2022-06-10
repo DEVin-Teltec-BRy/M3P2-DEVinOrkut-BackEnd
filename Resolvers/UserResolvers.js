@@ -66,15 +66,35 @@ const userResolvers = {
                 throw new AuthenticationError('Error: '+error.message);
             }
         },
+        getFriends: async (
+            _,
+            { pagination },
+            { dataSources: { users }, userId },
+        ) => {
+            const { page, per_page } = pagination;
+            if (!userId)
+                throw new AuthenticationError('Você deve estar logado');
+            if (Number(page) <= 0) {
+                throw new UserInputError('Erro: Pagina não valida.');
+            }
+            if (Number(per_page) <= 0) {
+                throw new UserInputError(
+                    'Erro: Precisa informar um numero de items > 0',
+                );
+            }
+
+            return await users.getFriends(userId, page, per_page);
+        },
     },
     Mutation: {
         createUser: async (_, { user }, { dataSources: { users } }) => {
             try {
                 const isEmailValid = await validator.isEmail(user.email);
                 if (!isEmailValid) {
-                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
-                        argumentName: 'email',
-                    });
+                    throw new UserInputError(
+                        'Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
+                            argumentName: 'email',
+                        });
                 }
 
                 const isValidPassword = await passwordValidator(user.password);
@@ -89,9 +109,12 @@ const userResolvers = {
 
                 const isCpfValid = cpf.isValid(user.cpf);
                 if (!isCpfValid) {
-                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
-                        argumentName: 'cpf',
-                    });
+                    throw new UserInputError(
+                        'Erro: Não foi possivel efetuar este processo, valores passados são invalidos.',
+                        {
+                            argumentName: 'cpf',
+                        },
+                    );
                 }
 
                 const password = await bcrypt.hash(user.password, 10);
@@ -106,9 +129,8 @@ const userResolvers = {
                 };
             } catch (error) {
                 throw new UserInputError(`Erro: ${error.message}`, {
-                        argumentName: 'password',
-                    },
-                );
+                    argumentName: 'password',
+                });
             }
         },
         login: async (
@@ -164,9 +186,12 @@ const userResolvers = {
             try {
                 const isEmailValid = await validator.isEmail(user.email);
                 if (!isEmailValid) {
-                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
-                        argumentName: 'email',
-                    });
+                    throw new UserInputError(
+                        'Erro: Não foi possivel efetuar este processo, valores passados são invalidos.',
+                        {
+                            argumentName: 'email',
+                        },
+                    );
                 }
 
                 const gmail = user.email;
@@ -232,12 +257,13 @@ const userResolvers = {
             try {
                 if (!userId) {
                     throw new UserInputError('Usuario não logado');
-                }   
+                }
                 jwt.verify(token, secretKey);
 
-                return { 
-                    token, user: users.getUser(userId),
-                }
+                return {
+                    token,
+                    user: users.getUser(userId),
+                };
             } catch (error) {
                 if (error.message === 'jwt malformed') {
                     throw new UserInputError('Formato de token não valido');
