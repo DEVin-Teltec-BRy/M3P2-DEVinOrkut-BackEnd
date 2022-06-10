@@ -1,6 +1,7 @@
 const { UserInputError } = require('apollo-server');
 const jwt = require('jsonwebtoken');
 const environment = require('../Config/Environment');
+const validator = require('validator');
 
 const secretKey = environment.jwtAccessTokenSecret;
 
@@ -47,9 +48,37 @@ const ifFriendOrRequestThrowError = (arrObjIds, userId) => {
     }
 };
 
+const validateInputLogin =  (email, password) =>{
+
+    const isEmailValid =  validator.isEmail(email);
+    // const isValidPassword =  passwordValidator(password);
+
+    if (!isEmailValid) {
+        console.log('email is not valid')
+        throw new UserInputError('Erro: Não foi possivel efetuar este processo, o email passado é invalido.', {
+            argumentName: 'email',
+        });
+    }
+
+    if(!isValidPassword) {
+        console.log('pass is not valid')
+        throw new UserInputError(
+            'Senha inválida. A senha deve conter pelo menos 8 caracteres, uma maiúscula, um número e um caractere especial.',
+            {
+                argumentName: 'password',
+            },
+        );
+    }
+
+    console.log('é valido')
+    return true;
+
+ }
+
 module.exports = {
     getTokenPayload,
     getUserId,
     passwordValidator,
     checkRequest: ifFriendOrRequestThrowError,
+    validateInputLogin,
 };

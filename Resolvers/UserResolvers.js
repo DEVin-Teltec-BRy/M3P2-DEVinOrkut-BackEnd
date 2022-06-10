@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const environment = require('../Config/Environment');
 const validator = require('validator');
 const { UserInputError, AuthenticationError } = require('apollo-server');
-const { passwordValidator } = require('../Helpers/functions');
+const { passwordValidator, validateInputLogin } = require('../Helpers/functions');
 const cpfValidator = require('../Helpers/validatorCpf');
 const { typesOfUser } = require('./typesUser');
 const sendEmail = require('../Helpers/email-send');
@@ -39,8 +39,8 @@ const userResolvers = {
         },
         users: async (_, __, { dataSources: { users }, userId }) => {
             try {
-                if (!userId)
-                    throw new AuthenticationError('you must be logged in');
+                // if (!userId)
+                //     throw new AuthenticationError('you must be logged in');
                 return users.getAll();
             } catch (error) {
                 throw new Error(error);
@@ -117,30 +117,38 @@ const userResolvers = {
             info,
         ) => {
             try {
-                const [user] = await users.findByEmail(email);
-                if (!user) {
-                    throw new UserInputError('Usuario não encontrado', {
-                        argumentName: 'email',
+
+              const isValidInput =  validateInputLogin(email, password);
+                if (isValidInput) {
+                    const [user] = await users.findByEmail(email);
+
+                    if (!user) {
+                        throw new UserInputError('Usuario não encontrado', {
+                            argumentName: 'email',
+                        });
+                    }
+                    const isValid = await bcrypt.compare(password, user.password);
+
+                    if (!isValid) {
+                        throw new UserInputError(
+                            'Senha inválida, tente novamente',
+                            {
+                                argumentName: 'login',
+                            },
+                        );
+                    }
+
+                    const token = jwt.sign({ userId: user._id }, secretKey, {
+                        expiresIn: '1d',
                     });
-                }
-                const isValid = await bcrypt.compare(password, user.password);
-                if (!isValid) {
-                    throw new UserInputError(
-                        'Email ou senha invalido, tente novamente',
-                        {
-                            argumentName: 'login',
-                        },
-                    );
+
+                    return {
+                        token,
+                        user,
+                    };
+
                 }
 
-                const token = jwt.sign({ userId: user._id }, secretKey, {
-                    expiresIn: '1d',
-                });
-
-                return {
-                    token,
-                    user,
-                };
             } catch (error) {
                 throw new UserInputError(
                     'Email ou senha invalido, tente novamente',
@@ -230,10 +238,10 @@ const userResolvers = {
             try {
                 if (!userId) {
                     throw new UserInputError('Usuario não logado');
-                }   
+                }
                 jwt.verify(token, secretKey);
 
-                return { 
+                return {
                     token, user: users.getUser(userId),
                 }
             } catch (error) {
@@ -279,6 +287,8 @@ const userResolvers = {
         },
     },
     User: typesOfUser,
+
+
 };
 
 module.exports = userResolvers;
