@@ -14,9 +14,6 @@ class Users extends MongoDataSource {
     findByEmail(email) {
         return this.findByFields({ email });
     }
-    searchUserByName(name) {
-        return this.model.find({ fullName: { $regex: name, $options: 'i' } });
-    }
     async getFriends(idUser, pageNumber = 1, nPerPage = 20) {
         const user = await this.findOneById(idUser);
         const count = user.friends.length;
@@ -61,6 +58,11 @@ class Users extends MongoDataSource {
             }
          
         };
+    findByCpf(cpf) {
+        return this.model.findByFields({ cpf });
+    }
+    searchUserByName(name) {
+        return this.model.find({ fullName: { $regex: name, $options: 'i' } });
     }
 }
 

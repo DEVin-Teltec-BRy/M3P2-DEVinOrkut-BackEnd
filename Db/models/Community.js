@@ -17,7 +17,7 @@ const CommunitySchema = mongoose.Schema({
         required: true,
     },
     imageUrl: [String],
-    category: {
+    categoryEnum: {
         type: String,
         enum: [
             'BEM_ESTAR',

@@ -43,7 +43,7 @@ input NewPassword {
     newPassword:String!
     confirmPassword:String!
 }
-input Testimonial{
+input userTestimonial{
     testimonial:String!
     userId:String!
     from:String!
