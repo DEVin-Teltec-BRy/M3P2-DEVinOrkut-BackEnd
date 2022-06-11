@@ -5,9 +5,9 @@ type Community {
     description: String!
     categoryEnum: CategoryEnum!
     creation_date: Date
-    members: [User!]!
-    foruns: [Forum]!
-    owner: User!
+    members: [User!]
+    foruns: [Forum]
+    owner: User
 }
 
 input CommunityInput {
