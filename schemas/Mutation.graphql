@@ -20,5 +20,6 @@ type Mutation {
     createTestimonial(input: userTestimonial ):String
     addFan(followedId: ID!): Fan
     removeFan(followedId: ID!): Fan
+    updateUser(input: UserUpdate): User
 }
 
