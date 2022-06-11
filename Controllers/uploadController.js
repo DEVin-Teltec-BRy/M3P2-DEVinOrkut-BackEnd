@@ -48,7 +48,7 @@ const uploadImageUser = async (req, res) => {
             { $push: { imageUrl: url } },
         );
 
-        res.status(201).send(`Uploaded Successfully...!`);
+        res.status(201).send({ profilePicture: url });
     } catch (error) {
         res.status(500).json({ error: error });
     }
@@ -69,7 +69,7 @@ const uploadImageProfile = async (req, res) => {
             { $push: { profilePicture: url } },
         );
 
-        res.status(201).send(`Uploaded Successfully...!`);
+        res.status(201).send({ profilePicture: url });
     } catch (error) {
         res.status(500).json({ error: error });
     }
@@ -91,7 +91,7 @@ const uploadImageCommunity = async (req, res) => {
             { $push: { imageUrl: url } },
         );
 
-        res.status(201).send(`Uploaded Successfully...!`);
+        res.status(201).send({ imageUrl: url });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
