@@ -18,5 +18,7 @@ type Mutation {
     createComent(input: ComentInput): Coments
     deleteComent(forumId: ID!, comentId: ID!): Coments
     createTestimonial(input: userTestimonial ):String
-} 
+    addFan(followedId: ID!): Fan
+    removeFan(followedId: ID!): Fan
+}
 

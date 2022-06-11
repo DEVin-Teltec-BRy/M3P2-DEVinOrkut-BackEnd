@@ -11,6 +11,7 @@ const Users = require('../Db/models/user');
 const Testimonial = require('../Db/models/testimonial');
 const friendshipResolvers = require('./friendshipResolvers');
 const { host_front, host_back } = require('../Config/Environment');
+const socialRelationshipsResolvers = require('./socialRelationshipsResolvers');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -225,6 +226,8 @@ const userResolvers = {
         requestFriendship: friendshipResolvers.friendRequest,
         removeFriendship: friendshipResolvers.removeFriendship,
         acceptRequest: friendshipResolvers.acceptRequest,
+        addFan: socialRelationshipsResolvers.addFan,
+        removeFan: socialRelationshipsResolvers.removeFan,
 
         sendEmailresetPassword: async (
             _,
