@@ -18,6 +18,6 @@ type Mutation {
     createComent(input: ComentInput): Coments
     deleteComent(forumId: ID!, comentId: ID!): Coments
     createTestimonial(input: userTestimonial ):String
-    updateUser(input: UserUpdate): String
+    updateUser(input: UserUpdate): User
 } 
 
