@@ -126,8 +126,7 @@ const communityResolvers = {
         members: async (
             communityArg,
             { limit, offset },
-            { dataSources: { users }, userId },
-            info,
+            { dataSources: { users }, userId }
         ) => {
             const newLimit =
                 !Number(limit) || Number(limit) > 20 ? 20 : Number(limit);
