@@ -12,6 +12,10 @@ const UserTypes = {
             communities.getCommunityById(communityId),
         );
     },
+    profilePicture: user => {
+        user.profilePicture.reverse();
+        return user.profilePicture;
+    },
 };
 
 module.exports = UserTypes;
