@@ -34,7 +34,7 @@ const friendshipRequest = async (_, {senderId, requestedId}, { dataSources: { us
   }
   sendEmail(sendEmailTo, variables, 'invite-friend');
   await userRequested.save();
-  return loggedUser;
+  return userRequested;
 }
 
 module.exports = friendshipRequest
