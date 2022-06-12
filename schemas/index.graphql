@@ -15,4 +15,5 @@
 #import Pagination from 'Pagination.graphql'
 #import PaginationInput from 'Pagination.graphql'
 #import Testimonial from 'Testimonial.graphql'
+#import Fan from 'Social.graphql'
 
