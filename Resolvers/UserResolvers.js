@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const environment = require('../Config/Environment');
 const validator = require('validator');
 const { UserInputError, AuthenticationError } = require('apollo-server');
-const { passwordValidator, getAge } = require('../Helpers/functions');
+const { passwordValidator, validateInputLogin, getAge } = require('../Helpers/functions');
 const cpfValidator = require('../Helpers/validatorCpf');
 const { typesOfUser } = require('./typesUser');
 const sendEmail = require('../Helpers/email-send');
@@ -186,30 +186,36 @@ const userResolvers = {
             info,
         ) => {
             try {
-                const [user] = await users.findByEmail(email);
-                if (!user) {
-                    throw new UserInputError('Usuario não encontrado', {
-                        argumentName: 'email',
+                const isValidInput =  validateInputLogin(email, password);
+                if (isValidInput) {
+                    const [user] = await users.findByEmail(email);
+
+                    if (!user) {
+                        throw new UserInputError('Usuario não encontrado', {
+                            argumentName: 'email',
+                        });
+                    }
+                    const isValid = await bcrypt.compare(password, user.password);
+
+                    if (!isValid) {
+                        throw new UserInputError(
+                            'Senha inválida, tente novamente',
+                            {
+                                argumentName: 'login',
+                            },
+                        );
+                    }
+
+                    const token = jwt.sign({ userId: user._id }, secretKey, {
+                        expiresIn: '1d',
                     });
-                }
-                const isValid = await bcrypt.compare(password, user.password);
-                if (!isValid) {
-                    throw new UserInputError(
-                        'Email ou senha invalido, tente novamente',
-                        {
-                            argumentName: 'login',
-                        },
-                    );
+                    return {
+                        token,
+                        user,
+                    };
+
                 }
 
-                const token = jwt.sign({ userId: user._id }, secretKey, {
-                    expiresIn: '1d',
-                });
-
-                return {
-                    token,
-                    user,
-                };
             } catch (error) {
                 throw new UserInputError(
                     'Email ou senha invalido, tente novamente',
@@ -259,7 +265,7 @@ const userResolvers = {
                     linkLogo: `${host_back}/assets/imgs/logo.png`,
                     redirectLink: `${host_front}/resetpass/${Token}`,
                 };
-                sendEmail(userObject, variables, '../emails/reset-password');
+                sendEmail(userObject, variables, 'reset-password');
 
                 return `Email enviado para ${user.email}`;
             } catch (error) {
@@ -371,6 +377,8 @@ const userResolvers = {
         },
     },
     User: typesOfUser,
+
+
 };
 
 module.exports = userResolvers;
