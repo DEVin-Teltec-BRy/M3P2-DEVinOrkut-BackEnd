@@ -2,7 +2,6 @@ const { UserInputError } = require('apollo-server');
 const jwt = require('jsonwebtoken');
 const environment = require('../Config/Environment');
 const validator = require('validator');
-const Console = require("console");
 
 const secretKey = environment.jwtAccessTokenSecret;
 

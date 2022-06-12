@@ -41,8 +41,8 @@ const userResolvers = {
         },
         users: async (_, __, { dataSources: { users }, userId }) => {
             try {
-                // if (!userId)
-                //     throw new AuthenticationError('you must be logged in');
+                if (!userId)
+                    throw new AuthenticationError('you must be logged in');
                 return users.getAll();
             } catch (error) {
                 throw new Error(error);
