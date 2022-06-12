@@ -188,9 +188,7 @@ const userResolvers = {
             info,
         ) => {
             try {
-
-                // const isValidInput = true;
-              const isValidInput =  validateInputLogin(email, password);
+                const isValidInput =  validateInputLogin(email, password);
                 if (isValidInput) {
                     const [user] = await users.findByEmail(email);
 
@@ -213,7 +211,6 @@ const userResolvers = {
                     const token = jwt.sign({ userId: user._id }, secretKey, {
                         expiresIn: '1d',
                     });
-                        console.log(token);
                     return {
                         token,
                         user,
