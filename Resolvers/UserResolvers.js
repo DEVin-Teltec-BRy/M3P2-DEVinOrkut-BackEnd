@@ -265,7 +265,7 @@ const userResolvers = {
                     linkLogo: `${host_back}/assets/imgs/logo.png`,
                     redirectLink: `${host_front}/resetpass/${Token}`,
                 };
-                sendEmail(userObject, variables, '../emails/reset-password');
+                sendEmail(userObject, variables, 'reset-password');
 
                 return `Email enviado para ${user.email}`;
             } catch (error) {
