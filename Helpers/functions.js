@@ -34,6 +34,22 @@ function passwordValidator(password) {
     );
 }
 
+const getAge = birthDate => {
+    const today = new Date();
+    const birthDateString = birthDate.split('/');
+    const birthDateObject = new Date(
+        birthDateString[2],
+        birthDateString[1] - 1,
+        birthDateString[0],
+    );
+    const age = today.getFullYear() - birthDateObject.getFullYear();
+    const m = today.getMonth() - birthDateObject.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDateObject.getDate())) {
+        return age - 1;
+    }
+    return age;
+};
+
 const ifFriendOrRequestThrowError = (arrObjIds, userId) => {
     const hasResult = arrObjIds.find(
         objectId => objectId.toString() === userId,
@@ -75,10 +91,15 @@ const validateInputLogin =  (email, password) =>{
 
  }
 
+const generatePagination = (array, page_size, page_number) => {
+    return array.slice((page_number - 1) * page_size, page_number * page_size);
+};
 module.exports = {
     getTokenPayload,
     getUserId,
     passwordValidator,
+    getAge,
     checkRequest: ifFriendOrRequestThrowError,
     validateInputLogin,
+    generatePagination,
 };

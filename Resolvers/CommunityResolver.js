@@ -11,14 +11,16 @@ const communityResolvers = {
             _,
             { id },
             { dataSources: { communities }, userId },
-        ) => communities.findOneById(id),
+        ) => {
+            return communities.getCommunityById(id);
+        },
     },
 
     Mutation: {
         createCommunity: async (
             _,
             { input },
-            { dataSources: { communities }, userId },
+            { dataSources: { communities, users }, userId },
         ) => {
             try {
                 if (!userId) {
@@ -34,7 +36,7 @@ const communityResolvers = {
                 if (isEmptyString) {
                     throw new Error('Nome não pode ser vazio.');
                 }
-
+                const user = await users.getUser(userId);
                 const newCommunity = await communities.create({
                     name: input.name.trim(),
                     logo: input.logo,
@@ -43,6 +45,8 @@ const communityResolvers = {
                     owner: userId,
                     members: userId,
                 });
+                user.communities.push(newCommunity._id);
+                await user.save();
                 return newCommunity;
             } catch (err) {
                 throw new Error(`Algo deu errado: ${err.message}`);
@@ -91,7 +95,7 @@ const communityResolvers = {
                     );
                 }
 
-                const community = await communities.getCommunityByIt(
+                const community = await communities.getCommunityById(
                     community_id,
                 );
                 const isOwner = community.owner == userId;
@@ -129,10 +133,6 @@ const communityResolvers = {
                 !Number(limit) || Number(limit) > 20 ? 20 : Number(limit);
             const newOffset = !Number(offset) ? 0 : Number(offset);
             try {
-                // A modificação da variavel userId(inserindo ID de algum membro da comunidade)
-                // deve ser feita para efeito de testes, pois a feature de login
-                // não foi implementada no projeto. Excluir esse comentário e alteração quando a feature de login for implementada.
-                // userId = '628feb45cad8e4e007601c6x';
                 if (!userId) {
                     return [];
                 }
@@ -156,6 +156,16 @@ const communityResolvers = {
         owner: async ({ owner }, _, { dataSources }) => {
             return dataSources.users.getUser(owner);
         },
+        foruns: async ({ foruns }, _, { dataSources, userId }) => {
+            try {
+                if (!userId) {
+                    return [];
+                }
+                return await dataSources.foruns.findManyByIds(foruns);
+            } catch (error) {
+                return [error.message];
+            }
+        }
     },
 };
 

@@ -3,13 +3,14 @@ const jwt = require('jsonwebtoken');
 const environment = require('../Config/Environment');
 const validator = require('validator');
 const { UserInputError, AuthenticationError } = require('apollo-server');
-const { passwordValidator, validateInputLogin } = require('../Helpers/functions');
+const { passwordValidator, validateInputLogin, getAge } = require('../Helpers/functions');
 const cpfValidator = require('../Helpers/validatorCpf');
 const { typesOfUser } = require('./typesUser');
 const sendEmail = require('../Helpers/email-send');
 const Users = require('../Db/models/user');
 const Testimonial = require('../Db/models/testimonial');
 const friendshipResolvers = require('./friendshipResolvers');
+const { host_front, host_back } = require('../Config/Environment');
 
 const secretKey = environment.jwtAccessTokenSecret;
 const cpf = new cpfValidator();
@@ -62,18 +63,68 @@ const userResolvers = {
 
                 return [...listUser, ...listCommunities];
             } catch (error) {
-                throw new AuthenticationError('Error: '+error.message);
+                throw new AuthenticationError('Error: ' + error.message);
             }
+        },
+        readTestimonials: async (_, { user }, { userId }) => {
+            try {
+                if (!userId)
+                    throw new AuthenticationError('Você deve estar logado');
+                console.log(user);
+                const data = await Users.findById(user);
+                console.log(data);
+                if (!data) return 'Usuário inexistente';
+                const testimonials = data.testimonial;
+                console.log(testimonials);
+                if (!testimonials) return 'Usuário não possui depoimentos';
+                const testimonialsResult = await Promise.all(
+                    testimonials.map(item => {
+                        return Testimonial.findById(item);
+                    }),
+                );
+                return testimonialsResult;
+            } catch (error) {
+                return error;
+            }
+        },
+        getFriends: async (
+            _,
+            { pagination },
+            { dataSources: { users }, userId },
+        ) => {
+            const { page, per_page } = pagination;
+            if (!userId)
+                throw new AuthenticationError('Você deve estar logado');
+            if (Number(page) <= 0) {
+                throw new UserInputError('Erro: Pagina não valida.');
+            }
+            if (Number(per_page) <= 0) {
+                throw new UserInputError(
+                    'Erro: Precisa informar um numero de items > 0',
+                );
+            }
+
+            return await users.getFriends(userId, page, per_page);
         },
     },
     Mutation: {
         createUser: async (_, { user }, { dataSources: { users } }) => {
             try {
+                const age = getAge(user.birthDate);
+                if (age < 18) {
+                    throw new UserInputError(
+                        'Você precisa ter 18 anos ou mais para se cadastrar',
+                    );
+                }
+
                 const isEmailValid = await validator.isEmail(user.email);
                 if (!isEmailValid) {
-                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
-                        argumentName: 'email',
-                    });
+                    throw new UserInputError(
+                        'Erro: Não foi possivel efetuar este processo, valores passados são invalidos.',
+                        {
+                            argumentName: 'email',
+                        },
+                    );
                 }
 
                 const isValidPassword = await passwordValidator(user.password);
@@ -88,7 +139,28 @@ const userResolvers = {
 
                 const isCpfValid = cpf.isValid(user.cpf);
                 if (!isCpfValid) {
-                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
+                    throw new UserInputError(
+                        'Não foi possivel efetuar este processo, valores passados são invalidos.',
+                        {
+                            argumentName: 'cpf',
+                        },
+                    );
+                }
+
+                const isUserEmailExist = await Users.findOne({
+                    email: user.email,
+                });
+
+                if (isUserEmailExist) {
+                    throw new UserInputError('Email já cadastrado.', {
+                        argumentName: 'email',
+                    });
+                }
+
+                const isUserCpfExist = await Users.findOne({ cpf: user.cpf });
+
+                if (isUserCpfExist) {
+                    throw new UserInputError('CPF já cadastrado.', {
                         argumentName: 'cpf',
                     });
                 }
@@ -104,10 +176,9 @@ const userResolvers = {
                     token,
                 };
             } catch (error) {
-                throw new UserInputError(`Erro: ${error.message}`, {
-                        argumentName: 'password',
-                    },
-                );
+                throw new UserInputError(`${error.message}`, {
+                    argumentName: 'password',
+                });
             }
         },
         login: async (
@@ -118,6 +189,7 @@ const userResolvers = {
         ) => {
             try {
 
+                // const isValidInput = true;
               const isValidInput =  validateInputLogin(email, password);
                 if (isValidInput) {
                     const [user] = await users.findByEmail(email);
@@ -141,7 +213,7 @@ const userResolvers = {
                     const token = jwt.sign({ userId: user._id }, secretKey, {
                         expiresIn: '1d',
                     });
-
+                        console.log(token);
                     return {
                         token,
                         user,
@@ -171,9 +243,12 @@ const userResolvers = {
             try {
                 const isEmailValid = await validator.isEmail(user.email);
                 if (!isEmailValid) {
-                    throw new UserInputError('Erro: Não foi possivel efetuar este processo, valores passados são invalidos.', {
-                        argumentName: 'email',
-                    });
+                    throw new UserInputError(
+                        'Erro: Não foi possivel efetuar este processo, valores passados são invalidos.',
+                        {
+                            argumentName: 'email',
+                        },
+                    );
                 }
 
                 const gmail = user.email;
@@ -190,7 +265,8 @@ const userResolvers = {
                     email: user.email,
                 };
                 const variables = {
-                    redirectLink: `http://localhost:3000/resetpass/${Token}`,
+                    linkLogo: `${host_back}/assets/imgs/logo.png`,
+                    redirectLink: `${host_front}/resetpass/${Token}`,
                 };
                 sendEmail(userObject, variables, '../emails/reset-password');
 
@@ -242,8 +318,9 @@ const userResolvers = {
                 jwt.verify(token, secretKey);
 
                 return {
-                    token, user: users.getUser(userId),
-                }
+                    token,
+                    user: users.getUser(userId),
+                };
             } catch (error) {
                 if (error.message === 'jwt malformed') {
                     throw new UserInputError('Formato de token não valido');
@@ -281,6 +358,22 @@ const userResolvers = {
                     return 'Erro ao criar depoimento';
 
                 return 'Depoimento criado com sucesso';
+            } catch (error) {
+                return error;
+            }
+        },
+        updateUser: async (_, { input }) => {
+            try {
+                const {id, ...dados} = input
+                const user = await Users.findById(id);
+                if (!user) return 'Usuário  inexistente';
+
+                const newUserData = await Users.updateOne(
+                    { _id: user.id },
+                    { ...dados },
+                );
+                if (newUserData.modifiedCount === 0) return 'Nenhum dado atualizado';
+                return newUserData;
             } catch (error) {
                 return error;
             }

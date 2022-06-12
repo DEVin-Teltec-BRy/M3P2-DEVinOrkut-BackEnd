@@ -2,3 +2,7 @@ type Friends {
     id: ID!
     name: String!
 }
+type FriendResults{
+    results: [User]!
+    pagination: Pagination!
+}

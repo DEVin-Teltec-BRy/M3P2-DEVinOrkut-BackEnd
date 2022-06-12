@@ -3,7 +3,7 @@ type Community {
     logo: String
     name: String!
     description: String!
-    category: Category!
+    categoryEnum: CategoryEnum!
     creation_date: Date
     members: [User!]!
     foruns: [Forum]!
@@ -14,10 +14,10 @@ input CommunityInput {
   logo: String
   name: String
   description: String
-  category: Category
+  categoryEnum: CategoryEnum
 }
 
-enum Category {
+enum CategoryEnum {
   BEM_ESTAR
   DIVERSOS
   ESPORTES

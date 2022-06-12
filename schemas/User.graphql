@@ -43,7 +43,7 @@ input NewPassword {
     newPassword:String!
     confirmPassword:String!
 }
-input Testimonial{
+input userTestimonial{
     testimonial:String!
     userId:String!
     from:String!
@@ -67,6 +67,23 @@ input UserInput {
     interests: [String!]
     aboutMe: String!
     password: String!
+}
+input UserUpdate {
+    id: ID!
+    fullName: String
+    gender: String
+    postal: String
+    city: String
+    state: String
+    address: String
+    number: String
+    complement: String
+    district: String
+    reference: String
+    relationship: String
+    humor:[String]
+    interests: [String]
+    aboutMe: String
 }
 
 type AuthPayload {

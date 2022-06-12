@@ -14,13 +14,17 @@ const resolvers = require('./Resolvers');
 const db = require('./Db');
 require('./Db/start');
 
-
 // const Users = require('./Data-sources/User');
 // const Communities = require('./Data-sources/Community');
 // const Foruns = require('./Data-sources/Forum');
 
-const { Users, Communities, Foruns, Coment } = require('./Data-sources');
-
+const {
+    Users,
+    Communities,
+    Foruns,
+    Coment,
+    Category,
+} = require('./Data-sources');
 
 const { getUserId } = require('./Helpers/functions');
 
@@ -29,8 +33,8 @@ const schemaPath = './schemas/index.graphql';
 (async function startApolloServer() {
     const app = express();
     app.use(cors());
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true, limit: '6mb' }));
+    app.use(express.json({ limit: '10MB' }));
+    app.use(express.urlencoded({ extended: false, limit: '10MB' }));
 
     const server = new ApolloServer({
         typeDefs: importSchema(schemaPath),
@@ -52,6 +56,7 @@ const schemaPath = './schemas/index.graphql';
             communities: new Communities(db.Community),
             foruns: new Foruns(db.Forum),
             coments: new Coment(db.Coment),
+            categories: new Category(db.Category),
         }),
         plugins: [
             // Install a landing page plugin based on NODE_ENV
